@@ -17,7 +17,7 @@ function renderNotificationsPage(container) {
   function render() {
     container.innerHTML = `
       <div style="background:white;">
-        <div style="padding:1rem;display:flex;align-items:center;justify-content:space-between;">
+        <div class="notification-header" style="padding:1rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;border-bottom:1px solid rgba(229,231,235,0.5);">
           <h1 style="font-size:1.125rem;font-weight:700;margin:0;">Notifications</h1>
           <button style="background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;">${Icon('more-vertical', {size: 20})}</button>
         </div>
