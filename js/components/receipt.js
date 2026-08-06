@@ -1,4 +1,19 @@
-function showTransactionReceipt({ amount, success = true, date, details = [], onClose, title = "Transaction Receipt", footerText, variant = "badge", recipientName, recipientIcon }) {
+// Bank logos mapping
+const BANK_LOGOS = {
+  "GTB": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23003366' width='100' height='100'/%3E%3Ctext x='50' y='60' font-size='40' font-weight='bold' fill='white' text-anchor='middle' letter-spacing='2'%3EGTB%3C/text%3E%3C/svg%3E",
+  "Access Bank": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23D41159' width='100' height='100'/%3E%3C/svg%3E",
+  "First Bank": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%234A90E2' width='100' height='100'/%3E%3C/svg%3E",
+  "UBA": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23EC1C24' width='100' height='100'/%3E%3C/svg%3E",
+  "Stanbic IBTC": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23003478' width='100' height='100'/%3E%3C/svg%3E",
+  "FCMB": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23004B93' width='100' height='100'/%3E%3C/svg%3E",
+  "Zenith Bank": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23001E6C' width='100' height='100'/%3E%3C/svg%3E",
+  "MTN": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23FFCC00'/%3E%3Ctext x='50' y='62' font-family='Arial' font-weight='900' font-size='32' fill='%23000' text-anchor='middle'%3EMTN%3C/text%3E%3C/svg%3E",
+  "Airtel": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23EF2B2D'/%3E%3C/svg%3E",
+  "Glo": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%2300A651'/%3E%3C/svg%3E",
+  "9Mobile": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23006F3A'/%3E%3C/svg%3E"
+};
+
+function showTransactionReceipt({ amount, success = true, date, details = [], onClose, title = "Transaction Receipt", footerText, variant = "badge", recipientName, recipientIcon, receiptStyle = "classic", bank = "OPay", recipientBank = "OPay", recipientAccount = "****" }) {
   const primaryColor = Stores.customization.get().primaryColor;
   const formattedAmount = amount.replace(/^[-+]/, "").replace(/^₦/, "").trim();
 
@@ -39,6 +54,80 @@ function showTransactionReceipt({ amount, success = true, date, details = [], on
     logoHtml = `<div style="width:3.25rem;height:3.25rem;border-radius:9999px;background:#00A9CE;display:flex;align-items:center;justify-content:center;margin:0 auto 0.75rem;font-weight:800;font-size:0.75rem;color:white;">9M</div>`;
   }
 
+  // Receipt Style 1: Classic (Simple OPay style)
+  const classicReceipt = `
+    <header style="background:white;padding:0.75rem 1rem;display:flex;align-items:center;justify-content:space-between;font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;border-bottom:1px solid #e5e7eb;">
+      <div class="flex items-center" style="gap:0.75rem;">
+        <button id="receipt-back" style="background:none;border:none;color:#111827;cursor:pointer;display:flex;align-items:center;">${Icon("chevron-left", { size: 20 })}</button>
+        <h1 style="font-size:0.9375rem;font-weight:700;margin:0;color:#111827;">Share Receipt</h1>
+      </div>
+    </header>
+    <div style="background:white;margin:15px;padding:24px 20px;border-radius:16px;border:1px solid #ebebeb;box-shadow:0 4px 10px rgba(0,0,0,0.06);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:5px;"><span style="color:${primaryColor};font-size:24px;font-weight:800;">O</span><span style="color:#151d52;font-size:22px;font-weight:700;">Pay</span></div>
+        <div style="color:#333;font-size:14px;font-weight:400;">Transaction Receipt</div>
+      </div>
+      <div style="text-align:center;font-size:26px;font-weight:700;color:${primaryColor};margin-bottom:2px;">₦${formattedAmount}</div>
+      <div style="text-align:center;font-size:14px;font-weight:500;color:${primaryColor};margin-bottom:6px;">${success ? "Successful" : "Failed"}</div>
+      <div style="text-align:center;font-size:12px;color:#666;margin-bottom:20px;">${date}</div>
+      <hr style="border:0;border-top:1px solid #f0f0f0;margin:12px 0;">
+      ${details.length > 0 ? details.map(d => `<div style="display:flex;justify-content:space-between;margin-bottom:14px;"><span style="color:#777;font-weight:400;font-size:13px;">${d.label}</span><div style="text-align:right;max-width:72%;"><div style="font-weight:600;color:#111;font-size:14px;text-transform:uppercase;display:block;">${d.value}</div></div></div>`).join("") : ""}
+    </div>
+  `;
+
+  // Receipt Style 2: Detailed (Bank transfer with progress)
+  const detailedReceipt = `
+    <div style="background:white;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;">
+      <div style="display:flex;align-items:center;gap:15px;">
+        <button id="receipt-back" style="background:none;border:none;color:#333;cursor:pointer;display:flex;align-items:center;width:24px;height:24px;">${Icon("chevron-left", { size: 20 })}</button>
+        <span style="font-size:16px;font-weight:500;color:#222;">Transaction Details</span>
+      </div>
+      <svg width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='${primaryColor}' stroke-width='2' style='cursor:pointer;' onclick="this.closest('[data-overlay]').remove();"><path d='M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z'/></svg>
+    </div>
+    <div style="position:relative;overflow:visible;background:white;margin:15px;padding:20px;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+      <div style="position:absolute;top:0;left:50%;transform:translate(-50%,-50%);width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;background-color:#1a3365;overflow:hidden;">
+        <img src="${BANK_LOGOS[recipientBank] || BANK_LOGOS['GTB']}" style="width:100%;height:100%;object-fit:contain;" onerror="this.src='${BANK_LOGOS['GTB']}';" />
+      </div>
+      <div style="text-align:center;margin-top:25px;margin-bottom:10px;font-weight:500;font-size:16px;color:#1a1a1a;">Transfer to ${recipientName || 'Recipient'}</div>
+      <div style="text-align:center;font-size:32px;font-weight:700;letter-spacing:0.5px;color:#000;">₦${formattedAmount}</div>
+      <div style="text-align:center;font-weight:500;margin-top:5px;font-size:15px;color:${primaryColor};display:flex;justify-content:center;align-items:center;gap:6px;">
+        <svg width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3'><path d='M20 6L9 17l-5-5'/></svg>
+        ${success ? "Successful" : "Failed"}
+      </div>
+      <div style="background-color:#f4f6f8;border-radius:8px;padding:12px;margin-top:15px;font-size:11px;color:#555;text-align:center;line-height:1.4;">The recipient account is expected to be credited within 5 minutes, subject to notification by the bank.</div>
+    </div>
+    <div style="background:white;margin:15px;padding:20px;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+      <div style="font-size:15px;font-weight:600;margin-bottom:15px;color:#1a1a1a;">Transaction Details</div>
+      ${details.map(d => `<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;font-size:14px;"><span style="color:#666;flex-shrink:0;margin-right:15px;">${d.label}</span><div style="text-align:right;max-width:70%;"><span style="font-weight:500;color:#1a1a1a;display:block;">${d.value}</span></div></div>`).join("")}
+    </div>
+  `;
+
+  // Receipt Style 3: Service (Airtime/Data with breakdown)
+  const serviceReceipt = `
+    <div style="background:white;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;">
+      <div style="display:flex;align-items:center;gap:15px;">
+        <button id="receipt-back" style="background:none;border:none;color:#333;cursor:pointer;display:flex;align-items:center;width:24px;height:24px;">${Icon("chevron-left", { size: 20 })}</button>
+        <span style="font-size:16px;font-weight:500;color:#222;">Transaction Details</span>
+      </div>
+      <svg width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='${primaryColor}' stroke-width='2' style='cursor:pointer;' onclick="this.closest('[data-overlay]').remove();"><path d='M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z'/></svg>
+    </div>
+    <div style="position:relative;overflow:visible;background:white;margin:15px;padding:20px;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+      <div style="position:absolute;top:0;left:50%;transform:translate(-50%,-50%);width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;background-color:${bank === 'MTN' ? '#FFCC00' : bank === 'Airtel' ? '#EF2B2D' : bank === 'Glo' ? '#00A651' : '#006F3A'};overflow:hidden;">
+        <img src="${BANK_LOGOS[bank] || BANK_LOGOS['MTN']}" style="width:100%;height:100%;object-fit:contain;" onerror="this.src='${BANK_LOGOS['MTN']}';" />
+      </div>
+      <div style="text-align:center;margin-top:25px;margin-bottom:10px;font-weight:500;font-size:16px;color:#1a1a1a;">${bank}</div>
+      <div style="text-align:center;font-size:32px;font-weight:700;letter-spacing:0.5px;color:#000;">₦${formattedAmount}</div>
+      <div style="text-align:center;font-weight:500;margin-top:5px;font-size:15px;color:${primaryColor};display:flex;justify-content:center;align-items:center;gap:6px;">
+        <svg width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3'><path d='M20 6L9 17l-5-5'/></svg>
+        ${success ? "Successful" : "Failed"}
+      </div>
+    </div>
+    <div style="background:white;margin:15px;padding:20px;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+      <div style="font-size:15px;font-weight:600;margin-bottom:15px;color:#1a1a1a;">Transaction Details</div>
+      ${details.map(d => `<div style="display:flex;justify-content:space-between;font-size:14px;padding:6px 0;"><span style="color:#666;">${d.label}</span><span style="font-weight:500;color:#1a1a1a;">${d.value}</span></div>`).join("")}
+    </div>
+  `;
+
   const headerBlock = variant === "tracker" ? `
     <div style="text-align:center;padding:1.5rem 1rem 1rem;max-width:100%;width:100%;">
       ${logoHtml || `<div style="width:3.25rem;height:3.25rem;border-radius:9999px;background:#1B1464;display:flex;align-items:center;justify-content:center;margin:0 auto 0.75rem;overflow:hidden;">${recipientIcon ? `<img src="${recipientIcon}" style="width:100%;height:100%;object-fit:cover;" />` : `<span style="color:white;">${Icon("user", { size: 22 })}</span>`}</div>`}
@@ -74,7 +163,14 @@ function showTransactionReceipt({ amount, success = true, date, details = [], on
       </div>
     </div>`;
 
-  overlay.innerHTML = `
+  // Select receipt style
+  let receiptContent = classicReceipt;
+  if (receiptStyle === "detailed") {
+    receiptContent = detailedReceipt;
+  } else if (receiptStyle === "service") {
+    receiptContent = serviceReceipt;
+  } else {
+    receiptContent = `
     <header style="background:white;padding:0.75rem 1rem;display:flex;align-items:center;justify-content:space-between;font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;border-bottom:1px solid #e5e7eb;">
       <div class="flex items-center" style="gap:0.75rem;">
         <button id="receipt-back" style="background:none;border:none;color:#111827;cursor:pointer;display:flex;align-items:center;">${Icon("chevron-left", { size: 20 })}</button>
@@ -87,8 +183,17 @@ function showTransactionReceipt({ amount, success = true, date, details = [], on
       <div style="margin:0;overflow:visible;padding:0;position:relative;z-index:1;">
         ${headerBlock}
       </div>
-    </div>
+    </div>`;
+  }
 
+  if (receiptStyle === "classic" || receiptStyle === "detailed" || receiptStyle === "service") {
+    overlay.innerHTML = receiptContent + `
+    <div style="display:flex;gap:10px;padding:0 15px;margin-top:15px;margin-bottom:30px;justify-content:center;">
+      <button id="receipt-report" style="flex:1;padding:14px 20px;border-radius:50px;text-align:center;font-weight:600;font-size:15px;border:none;cursor:pointer;background-color:#e6f9ef;color:${primaryColor};" onclick="this.closest('[data-overlay]').remove();">Report Issue</button>
+      <button id="receipt-done" style="flex:1;padding:14px 20px;border-radius:50px;text-align:center;font-weight:600;font-size:15px;border:none;cursor:pointer;background-color:${primaryColor};color:white;" onclick="alert('Share Receipt');">Share Receipt</button>
+    </div>`;
+  } else {
+    overlay.innerHTML = receiptContent + `
     <div class="card" style="margin:0.75rem 1rem;padding:1rem;font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;background:white;">
       ${details.slice(0, 2).length > 0 ? `
         <h3 style="font-size:0.875rem;font-weight:700;margin:0 0 0.75rem;color:#111827;">Recipient Details</h3>
@@ -117,16 +222,22 @@ function showTransactionReceipt({ amount, success = true, date, details = [], on
       <button id="receipt-report" style="flex:1;padding:0.75rem;border-radius:0.75rem;font-weight:600;font-size:0.875rem;border:1px solid #e5e7eb;background:white;color:#111827;">Report Issue</button>
       <button id="receipt-done" style="flex:1;padding:0.75rem;border-radius:0.75rem;color:white;font-weight:600;font-size:0.875rem;border:none;background:${primaryColor};">Share Receipt</button>
     </div>`;
+  }
 
+  overlay.setAttribute("data-overlay", "true");
   document.body.appendChild(overlay);
   const close = () => {
     overlay.remove();
     if (onClose) onClose();
   };
-  overlay.querySelector("#receipt-back").addEventListener("click", close);
-  overlay.querySelector("#receipt-done").addEventListener("click", () => {
-    showShareReceipt({ amount: formattedAmount, success, date, details, variant });
-  });
+  const backBtn = overlay.querySelector("#receipt-back");
+  if (backBtn) backBtn.addEventListener("click", close);
+  const doneBtn = overlay.querySelector("#receipt-done");
+  if (doneBtn && (receiptStyle !== "classic" && receiptStyle !== "detailed" && receiptStyle !== "service")) {
+    doneBtn.addEventListener("click", () => {
+      showShareReceipt({ amount: formattedAmount, success, date, details, variant });
+    });
+  }
   overlay.querySelector("#receipt-report").addEventListener("click", () => {
     toast.success("Issue reported. Our team will review this transaction.");
   });

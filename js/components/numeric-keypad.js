@@ -11,11 +11,11 @@ function openNumericKeypad(opts) {
   let value = opts.value || "";
 
   const backdrop = document.createElement("div");
-  backdrop.style.cssText = "position:fixed;inset:0;z-index:998;background:rgba(0,0,0,0);transition:background 0.25s ease;";
+  backdrop.style.cssText = "position:fixed;inset:0;z-index:998;background:rgba(0,0,0,0);transition:background 0.25s ease;pointer-events:none;";
 
   const panel = document.createElement("div");
   panel.style.cssText =
-    "position:fixed;left:0;right:0;bottom:0;height:50vh;width:100%;display:flex;flex-direction:column;background:#fff;box-shadow:0 -2px 12px rgba(0,0,0,0.08);z-index:999;transform:translateY(100%);transition:transform 0.28s cubic-bezier(.22,.8,.28,1);";
+    "position:fixed;left:0;right:0;bottom:0;height:42vh;width:100%;display:flex;flex-direction:column;background:#fff;box-shadow:0 -2px 12px rgba(0,0,0,0.08);z-index:999;transform:translateY(100%);transition:transform 0.28s cubic-bezier(.22,.8,.28,1);max-width:420px;margin-left:auto;margin-right:auto;";
 
   function keyBtn(key, label, opts2) {
     opts2 = opts2 || {};
@@ -60,7 +60,9 @@ function openNumericKeypad(opts) {
     if (opts.onClose) opts.onClose(value);
   }
 
-  backdrop.addEventListener("click", close);
+  backdrop.addEventListener("click", (e) => {
+    if (e.target === backdrop) close();
+  });
   panel.querySelector("[data-done]").addEventListener("click", close);
   panel.querySelectorAll("[data-key]").forEach((btn) => {
     const key = btn.dataset.key;
