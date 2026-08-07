@@ -55,13 +55,14 @@ function showTransactionReceipt({ amount, success = true, date, details = [], on
   // Helper: turn a `details` array into <detail-row> markup, matching the
   // reference styling (label left, value right, uppercase bold for names,
   // copy icon for long IDs).
-  function detailRows(rows, { uppercaseFirstLine = false, copyableLabels = ["Transaction No.", "Session ID"] } = {}) {
+  function detailRows(rows, { copyableLabels = ["Transaction No.", "Session ID"] } = {}) {
     return rows.map((d, i) => {
       const isLast = i === rows.length - 1;
       const isCopyable = copyableLabels.includes(d.label);
       const lines = String(d.value).split("<br/>");
+      const isNameRow = lines.length > 1; // "Name<br/>Bank | Account" style rows only
       const valueHtml = lines.map((line, li) => {
-        const bold = uppercaseFirstLine && li === 0;
+        const bold = isNameRow && li === 0;
         return `<span style="font-weight:${bold ? 600 : 400};color:${bold ? '#111' : '#555'};font-size:${bold ? '14px' : '13px'};${bold ? 'text-transform:uppercase;' : ''}display:block;">${line}</span>`;
       }).join("");
       return `
@@ -113,7 +114,7 @@ function showTransactionReceipt({ amount, success = true, date, details = [], on
           <div style="text-align:center;font-size:14px;font-weight:500;color:${statusColor};margin-bottom:6px;">${success ? "Successful" : "Failed"}</div>
           <div style="text-align:center;font-size:12px;color:#666;margin-bottom:20px;">${date || ""}</div>
           <hr style="border:0;border-top:1px solid #f0f0f0;margin:12px 0;">
-          ${detailRows(details, { uppercaseFirstLine: true })}
+          ${detailRows(details)}
           <hr style="border:0;border-top:1px dashed #e0e0e0;margin:12px 0;">
           <div style="margin-top:5px;font-size:11px;color:#666;line-height:1.4;letter-spacing:0.2px;">
             ${footerText || `Enjoy a better life with ${"OPay"}. Get free transfers, withdrawals, bill payments, instant loans, and good annual interest on your savings. OPay is licensed by the Central Bank of Nigeria and insured by the NDIC.`}
@@ -173,7 +174,7 @@ function showTransactionReceipt({ amount, success = true, date, details = [], on
       </div>
       <div style="background:#fff;margin:15px;padding:20px;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.04);">
         <div style="font-size:15px;font-weight:600;margin-bottom:15px;">Transaction Details</div>
-        ${detailRows(details, { uppercaseFirstLine: true })}
+        ${detailRows(details)}
       </div>
       <div style="background:#fff;margin:15px;padding:20px;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.04);">
         <div style="font-size:15px;font-weight:600;margin-bottom:15px;">More Actions</div>
