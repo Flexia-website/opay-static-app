@@ -6,6 +6,40 @@ function renderTransactionHistoryPage(container) {
   const statusOptions = ["All Status", "Successful", "Pending", "Failed", "To be paid", "Reversed"];
   const typeOptions = ["Transfer to", "Airtime", "Data", "Betting", "TV", "Bank Transfer", "Withdrawal"];
 
+  // Bank and network logos
+  const logoMap = {
+    "gtbank": "https://upload.wikimedia.org/wikipedia/en/2/2f/GTBank_logo.svg",
+    "first bank": "https://upload.wikimedia.org/wikipedia/en/e/e3/First_Bank_Nigeria_logo.svg",
+    "access bank": "https://upload.wikimedia.org/wikipedia/en/1/1e/Access_Bank_logo.svg",
+    "uba": "https://upload.wikimedia.org/wikipedia/en/c/ce/UBA_logo.svg",
+    "zenith": "https://upload.wikimedia.org/wikipedia/en/7/7b/Zenith_Bank_logo.svg",
+    "stanbic": "https://upload.wikimedia.org/wikipedia/en/a/a0/Stanbic_IBTC_logo.svg",
+    "fcmb": "https://upload.wikimedia.org/wikipedia/en/8/8f/FCMB_logo.svg",
+    "diamond": "https://upload.wikimedia.org/wikipedia/en/5/59/Diamond_Bank_logo.svg",
+    "ecobank": "https://upload.wikimedia.org/wikipedia/en/8/81/Ecobank_logo.svg",
+    "mtn": "https://upload.wikimedia.org/wikipedia/en/e/e8/MTN_Nigeria_logo.svg",
+    "airtel": "https://upload.wikimedia.org/wikipedia/en/9/9a/Airtel_logo.svg",
+    "glo": "https://upload.wikimedia.org/wikipedia/en/1/1a/Globacom_logo.svg",
+    "9mobile": "https://upload.wikimedia.org/wikipedia/en/8/8a/9mobile_logo.svg",
+    "flutterwave": "https://upload.wikimedia.org/wikipedia/en/f/f6/Flutterwave_logo.svg",
+    "paystack": "https://upload.wikimedia.org/wikipedia/en/c/c7/Paystack_logo.svg",
+    "remita": "https://upload.wikimedia.org/wikipedia/en/4/47/Remita_logo.svg",
+    "betking": "https://upload.wikimedia.org/wikipedia/en/d/d8/BetKing_logo.svg",
+    "betwins": "https://upload.wikimedia.org/wikipedia/en/0/01/Betwins_logo.svg",
+    "dstv": "https://upload.wikimedia.org/wikipedia/en/8/8b/DStv_logo.svg",
+    "gotv": "https://upload.wikimedia.org/wikipedia/en/7/7a/GoTV_logo.svg",
+    "startimes": "https://upload.wikimedia.org/wikipedia/en/1/1c/StarTimes_logo.svg",
+  };
+
+  function getTransactionLogo(transactionType) {
+    if (!transactionType) return null;
+    const type = transactionType.toLowerCase();
+    for (const [key, url] of Object.entries(logoMap)) {
+      if (type.includes(key)) return url;
+    }
+    return null;
+  }
+
   function parseTxnDate(dateStr) {
     const d = new Date(dateStr);
     return isNaN(d.getTime()) ? new Date() : d;
@@ -116,13 +150,14 @@ function renderTransactionHistoryPage(container) {
                 ${group.items
                   .map((t, i) => {
                     const isPositive = !t.amount.trim().startsWith("-");
+                    const logoUrl = getTransactionLogo(t.type);
                     return `
                   <button data-tx="${t.id}" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:0.75rem 0;${
                       i < group.items.length - 1 ? "border-bottom:1px solid #f3f4f6;" : ""
                     }background:none;border:none;text-align:left;">
                     <div class="flex items-center" style="gap:0.75rem;min-width:0;">
-                      <div style="width:2.5rem;height:2.5rem;border-radius:9999px;background:${primaryColor}15;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                        <span style="color:${primaryColor};">${Icon(t.icon || "user", { size: 20 })}</span>
+                      <div style="width:2.5rem;height:2.5rem;border-radius:9999px;background:white;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid #e5e7eb;overflow:hidden;">
+                        ${logoUrl ? `<img src="${logoUrl}" alt="" style="width:100%;height:100%;object-fit:contain;padding:2px;">` : `<span style="color:${primaryColor};">${Icon(t.icon || "user", { size: 20 })}</span>`}
                       </div>
                       <div style="text-align:left;min-width:0;">
                         <p style="font-weight:500;font-size:0.875rem;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${t.type}</p>
