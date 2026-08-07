@@ -13,7 +13,7 @@ const BANK_LOGOS = {
   "9Mobile": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23006F3A'/%3E%3C/svg%3E"
 };
 
-function showTransactionReceipt({ amount, success = true, date, details = [], onClose, title = "Transaction Receipt", footerText, variant = "badge", recipientName, recipientIcon, receiptStyle = "classic", bank = "OPay", recipientBank = "OPay", recipientAccount = "****" }) {
+function showTransactionReceipt({ amount, success = true, date, details = [], onClose, title = "Transaction Receipt", footerText, variant = "badge", recipientName, recipientIcon, receiptStyle = "legacy", bank = "OPay", recipientBank = "OPay", recipientAccount = "****" }) {
   const primaryColor = Stores.customization.get().primaryColor;
   const formattedAmount = amount.replace(/^[-+]/, "").replace(/^₦/, "").trim();
 
