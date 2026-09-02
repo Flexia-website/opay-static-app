@@ -28,6 +28,10 @@ function copyToClipboard(text) {
 
 function formatNumberWithCommas(num) {
   const str = String(num).replace(/\D/g, '');
+  const numValue = parseInt(str, 10);
+  if (numValue < 1000) {
+    return str;
+  }
   return str.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
