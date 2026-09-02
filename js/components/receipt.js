@@ -31,6 +31,52 @@ function formatNumberWithCommas(num) {
   return str.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
+async function captureAndShareReceipt(elementId, filename = 'receipt') {
+  try {
+    const element = document.getElementById(elementId);
+    if (!element) {
+      toast.error('Receipt not found');
+      return;
+    }
+    
+    const canvas = await html2canvas(element, {
+      backgroundColor: '#ffffff',
+      scale: 2,
+      logging: false,
+      useCORS: true,
+      allowTaint: true
+    });
+    
+    canvas.toBlob(async (blob) => {
+      if (navigator.share) {
+        try {
+          const file = new File([blob], `${filename}.png`, { type: 'image/png' });
+          await navigator.share({
+            files: [file],
+            title: 'Receipt',
+            text: 'Transaction Receipt'
+          });
+        } catch (err) {
+          // User cancelled or share failed
+          downloadImage(canvas, filename);
+        }
+      } else {
+        downloadImage(canvas, filename);
+      }
+    }, 'image/png');
+  } catch (err) {
+    console.error('Capture error:', err);
+    toast.error('Failed to capture receipt');
+  }
+}
+
+function downloadImage(canvas, filename) {
+  const link = document.createElement('a');
+  link.href = canvas.toDataURL('image/png');
+  link.download = `${filename}.png`;
+  link.click();
+}
+
 // The app-wide logo mark: <img logo.png/> + "Pay" text, used everywhere the
 // reference designs used a plain "O" + "Pay" wordmark.
 function opayWordmark({ imgSize = 24, textSize = "1.375rem" } = {}) {
@@ -94,8 +140,8 @@ function showTransactionReceipt({ amount, success = true, date, details = [], on
     : (BANK_LOGOS[bankName] || recipientIcon || BANK_LOGOS["First Bank"]);
 
   const logoBadge = `
-    <div style="position:absolute;top:0;left:50%;transform:translate(-50%,-50%);width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;background-color:${telcoBg};overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,0.12);">
-      <img src="${logoBadgeSrc}" style="width:100%;height:100%;object-fit:contain;" onerror="this.style.display='none';" />
+    <div style="position:absolute;top:0;left:50%;transform:translate(-50%,-50%);width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;background-color:white;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.15);border:2px solid white;">
+      ${recipientIcon ? `<img src="${recipientIcon}" style="width:90%;height:90%;object-fit:contain;" onerror="this.style.display='none';" />` : `<img src="${logoBadgeSrc}" style="width:100%;height:100%;object-fit:contain;" onerror="this.style.display='none';" />`}
     </div>`;
 
   // ---------------------------------------------------------------------
@@ -110,7 +156,7 @@ function showTransactionReceipt({ amount, success = true, date, details = [], on
         <button id="receipt-back" style="background:none;border:none;cursor:pointer;display:flex;align-items:center;color:#333;">${Icon("chevron-left", { size: 22 })}</button>
         <span style="font-size:16px;font-weight:500;color:#222;">Share Receipt</span>
       </div>
-      <section style="position:relative;background:#fff;margin:15px;padding:24px 20px 20px;border-radius:16px;border:1px solid #ebebeb;box-shadow:0 4px 10px rgba(0,0,0,0.06);${watermark}">
+      <section style="position:relative;background:#fff;margin:15px;padding:24px 20px 20px;border-radius:16px;border:1px solid #ebebeb;box-shadow:0 4px 10px rgba(0,0,0,0.06);${watermark}" id="receipt-section">
         <div style="position:relative;z-index:1;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
             ${opayWordmark({ imgSize: 22, textSize: "22px" })}
@@ -289,7 +335,9 @@ function showTransactionReceipt({ amount, success = true, date, details = [], on
   } else {
     const shareImgBtn = overlay.querySelector("#receipt-share-image");
     const sharePdfBtn = overlay.querySelector("#receipt-share-pdf");
-    if (shareImgBtn) shareImgBtn.addEventListener("click", () => showShareReceipt({ amount: formattedAmount, success, date, details, variant, title }));
+    if (shareImgBtn) shareImgBtn.addEventListener("click", () => {
+      captureAndShareReceipt('receipt-section', title || 'receipt');
+    });
     if (sharePdfBtn) sharePdfBtn.addEventListener("click", () => showShareReceipt({ amount: formattedAmount, success, date, details, variant, title }));
   }
 }
