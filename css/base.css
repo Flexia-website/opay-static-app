@@ -70,25 +70,40 @@ button:not(:disabled):active { transform: scale(0.96); }
   position: relative;
   overflow-x: hidden;
   box-shadow: 0 0 0 1px rgb(0 0 0 / 0.04);
+  width: 100%;
 }
 
-/* Mobile first */
+/* Mobile first - full width */
 @media (max-width: 768px) {
   #root {
     max-width: 100%;
+    width: 100%;
   }
 }
 
-/* Tablet and desktop - centered phone-like container */
+/* Tablet and up - full width responsive */
 @media (min-width: 769px) {
-  body { display: flex; justify-content: center; align-items: flex-start; padding: 2rem 0; min-height: 100vh; background: #f5f5f5; }
-  #root { max-width: 420px; min-height: calc(100vh - 4rem); border-radius: 1.75rem; box-shadow: 0 30px 60px -12px rgb(0 0 0 / 0.25), 0 0 0 1px rgb(0 0 0 / 0.06); overflow: hidden; }
+  body { 
+    display: block;
+    padding: 0;
+    min-height: 100vh;
+    background: hsl(var(--background));
+  }
+  #root { 
+    max-width: 100%;
+    width: 100%;
+    min-height: 100vh;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: hidden;
+  }
 }
 
-/* Large desktop */
-@media (min-width: 1024px) {
-  body { padding: 2rem 1rem; }
-  #root { max-width: 480px; }
+/* Large desktop - optional max-width wrapper if needed */
+@media (min-width: 1440px) {
+  #root { 
+    max-width: 100%;
+  }
 }
 
 /* Custom scrollbar (webkit) — thin, unobtrusive */
@@ -394,19 +409,16 @@ button:not(:disabled):active { transform: scale(0.96); }
   -webkit-backdrop-filter: blur(12px);
   border-top: 1px solid hsl(var(--border) / 0.8);
   box-shadow: 0 -4px 20px -4px rgb(0 0 0 / 0.08);
-  max-width: 420px;
-  margin: 0 auto;
   padding: 0.375rem 0.5rem calc(0.375rem + env(safe-area-inset-bottom, 0px));
   z-index: 50;
   width: 100%;
   box-sizing: border-box;
 }
 
-@media (min-width: 769px) {
+@media (max-width: 768px) {
   .app-bottom-nav {
-    max-width: 480px;
-    left: 50%;
-    transform: translateX(-50%);
+    max-width: 420px;
+    margin: 0 auto;
   }
 }
 .app-bottom-nav-item {
