@@ -66,6 +66,30 @@
 </script>
 <div id="root"></div>
 
+<!-- Network Status Monitor -->
+<div id="network-status" style="position:fixed;top:0;left:0;right:0;z-index:9998;background:#ef4444;color:white;padding:0.75rem;text-align:center;font-weight:600;font-size:0.875rem;display:none;box-shadow:0 2px 8px rgba(0,0,0,0.15);">
+  📡 No Internet Connection - App is in Offline Mode
+</div>
+
+<script>
+function updateNetworkStatus() {
+  const statusBar = document.getElementById('network-status');
+  const root = document.getElementById('root');
+  
+  if (!navigator.onLine) {
+    statusBar.style.display = 'block';
+    if (root) root.style.marginTop = '3rem';
+  } else {
+    statusBar.style.display = 'none';
+    if (root) root.style.marginTop = '0';
+  }
+}
+
+window.addEventListener('online', updateNetworkStatus);
+window.addEventListener('offline', updateNetworkStatus);
+updateNetworkStatus();
+</script>
+
 <!-- Screenshot & Screen Recording Protection -->
 <script>
 (function() {
