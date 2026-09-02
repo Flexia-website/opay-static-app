@@ -167,7 +167,7 @@ function showTransactionReceipt({ amount, success = true, date, details = [], on
   // used as the generic/default fallback receipt.
   // ---------------------------------------------------------------------
   function styleA() {
-    const watermark = `background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ctext x='50%25' y='50%25' transform='rotate(-35 50 50)' text-anchor='middle' dominant-baseline='central' font-family='Arial, sans-serif' font-weight='700' font-size='16' fill='%23cccccc' opacity='0.10'%3EPay%3C/text%3E%3C/svg%3E");background-repeat:repeat;background-position:center;`;
+    const watermark = `background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Ctext x='50%25' y='50%25' transform='rotate(-35 60 60)' text-anchor='middle' dominant-baseline='central' font-family='Arial, sans-serif' font-weight='700' font-size='18' fill='%23cccccc' opacity='0.08'%3EPay%3C/text%3E%3C/svg%3E");background-repeat:repeat;background-attachment:fixed;background-position:0 0;`;
     const commaSeparated = formatNumberWithCommas(formattedAmount);
     return `
       <div style="display:flex;align-items:center;padding:15px 20px;background:#fff;gap:10px;">
