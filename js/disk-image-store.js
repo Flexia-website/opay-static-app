@@ -1,5 +1,5 @@
 // js/disk-image-store.js
-// Disk Image Store: pick a directory, scan images, persist handles or blobs in IndexedDB.
+// Disk Image Store: pick a directory, scan images, persist thumbnails in IndexedDB.
 
 const DISK_DB_NAME = 'opay_disk_image_store_v1';
 const DISK_STORE_DIRS = 'dirHandles';
@@ -58,6 +58,47 @@ async function diskIdbDelete(storeName, key) {
   });
 }
 
+// Generate a thumbnail blob from an image/blob. Returns a PNG blob.
+function generateThumbnailBlob(blob, maxDim = 256, quality = 0.85) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let bitmap;
+      if (window.createImageBitmap) {
+        bitmap = await createImageBitmap(blob);
+      } else {
+        // Fallback: use Image element
+        const url = URL.createObjectURL(blob);
+        await new Promise((res, rej) => {
+          const img = new Image();
+          img.onload = () => { bitmap = img; res(); URL.revokeObjectURL(url); };
+          img.onerror = (e) => { URL.revokeObjectURL(url); rej(e); };
+          img.src = url;
+        });
+      }
+
+      let width = bitmap.width || bitmap.naturalWidth;
+      let height = bitmap.height || bitmap.naturalHeight;
+      const scale = Math.min(1, maxDim / Math.max(width, height));
+      const w = Math.round(width * scale);
+      const h = Math.round(height * scale);
+
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      // If bitmap is an Image element (fallback) drawImage works; createImageBitmap returns an ImageBitmap which also works
+      ctx.drawImage(bitmap, 0, 0, w, h);
+
+      canvas.toBlob((thumbBlob) => {
+        if (!thumbBlob) return reject(new Error('Thumbnail generation failed'));
+        resolve(thumbBlob);
+      }, 'image/png', quality);
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
 const DiskImageStore = {
   async pickDirectoryAndScan() {
     if (window.showDirectoryPicker) {
@@ -89,9 +130,17 @@ const DiskImageStore = {
         try {
           const file = await handle.getFile();
           if (!file.type.startsWith('image/')) continue;
-          const blob = file.slice(0, file.size);
-          const key = fullPath; // unique within store
-          await diskIdbPut(DISK_STORE_IMAGES, { name: key, blob, size: file.size, type: file.type, lastModified: file.lastModified });
+          // generate thumbnail and store thumbnail blob only
+          try {
+            const thumb = await generateThumbnailBlob(file, 256);
+            const key = fullPath; // unique within store
+            await diskIdbPut(DISK_STORE_IMAGES, { name: key, thumb, type: file.type, size: file.size, lastModified: file.lastModified });
+          } catch (thumbErr) {
+            console.warn('Thumbnail generation failed for', fullPath, thumbErr);
+            // fallback: store original blob if thumbnail fails
+            const blob = file.slice(0, file.size);
+            await diskIdbPut(DISK_STORE_IMAGES, { name: fullPath, thumb: blob, type: file.type, size: file.size, lastModified: file.lastModified });
+          }
         } catch (err) {
           console.error('Error reading file', fullPath, err);
         }
@@ -119,12 +168,14 @@ const DiskImageStore = {
         const files = Array.from(e.target.files || []);
         for (const f of files) {
           if (!f.type.startsWith('image/')) continue;
-          const blob = f.slice(0, f.size);
-          const key = f.webkitRelativePath || f.name;
           try {
-            await diskIdbPut(DISK_STORE_IMAGES, { name: key, blob, size: f.size, type: f.type, lastModified: f.lastModified });
+            const thumb = await generateThumbnailBlob(f, 256);
+            const key = f.webkitRelativePath || f.name;
+            await diskIdbPut(DISK_STORE_IMAGES, { name: key, thumb, type: f.type, size: f.size, lastModified: f.lastModified });
           } catch (err) {
-            console.error('Error storing fallback file', key, err);
+            console.error('Error storing fallback file', f.name, err);
+            const blob = f.slice(0, f.size);
+            await diskIdbPut(DISK_STORE_IMAGES, { name: f.name, thumb: blob, type: f.type, size: f.size, lastModified: f.lastModified });
           }
         }
         input.value = '';
@@ -138,14 +189,14 @@ const DiskImageStore = {
   async loadStoredImages() {
     const rows = await diskIdbGetAll(DISK_STORE_IMAGES);
     return rows.map(r => {
-      const url = URL.createObjectURL(r.blob);
+      const url = URL.createObjectURL(r.thumb);
       return { name: r.name, url, type: r.type, size: r.size, lastModified: r.lastModified };
     });
   },
 
   async getRawImageBlob(name) {
     const row = await diskIdbGet(DISK_STORE_IMAGES, name);
-    return row ? row.blob : null;
+    return row ? row.thumb : null;
   },
 
   async clearAll() {
