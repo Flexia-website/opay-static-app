@@ -31,6 +31,24 @@ function formatNumberWithCommas(num) {
   return str.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
+function generateTransactionId() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let result = '';
+  for (let i = 0; i < 24; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+}
+
+function generateReceiptId() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let result = '';
+  for (let i = 0; i < 20; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+}
+
 async function captureAndShareReceipt(elementId, filename = 'receipt') {
   try {
     const element = document.getElementById(elementId);
