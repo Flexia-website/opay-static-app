@@ -26,6 +26,11 @@ function copyToClipboard(text) {
   }
 }
 
+function formatNumberWithCommas(num) {
+  const str = String(num).replace(/\D/g, '');
+  return str.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
 // The app-wide logo mark: <img logo.png/> + "Pay" text, used everywhere the
 // reference designs used a plain "O" + "Pay" wordmark.
 function opayWordmark({ imgSize = 24, textSize = "1.375rem" } = {}) {
@@ -98,7 +103,8 @@ function showTransactionReceipt({ amount, success = true, date, details = [], on
   // used as the generic/default fallback receipt.
   // ---------------------------------------------------------------------
   function styleA() {
-    const watermark = `background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Ctext x='50%25' y='50%25' transform='rotate(-35 70 70)' text-anchor='middle' dominant-baseline='central' font-family='Arial, sans-serif' font-weight='700' font-size='22' fill='%23cccccc' opacity='0.10'%3EPay%3C/text%3E%3C/svg%3E");background-repeat:repeat;background-position:center;`;
+    const watermark = `background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ctext x='50%25' y='50%25' transform='rotate(-35 50 50)' text-anchor='middle' dominant-baseline='central' font-family='Arial, sans-serif' font-weight='700' font-size='16' fill='%23cccccc' opacity='0.10'%3EPay%3C/text%3E%3C/svg%3E");background-repeat:repeat;background-position:center;`;
+    const commaSeparated = formatNumberWithCommas(formattedAmount);
     return `
       <div style="display:flex;align-items:center;padding:15px 20px;background:#fff;gap:10px;">
         <button id="receipt-back" style="background:none;border:none;cursor:pointer;display:flex;align-items:center;color:#333;">${Icon("chevron-left", { size: 22 })}</button>
@@ -110,7 +116,7 @@ function showTransactionReceipt({ amount, success = true, date, details = [], on
             ${opayWordmark({ imgSize: 22, textSize: "22px" })}
             <div style="color:#333;font-size:14px;font-weight:400;">Transaction Receipt</div>
           </div>
-          <div style="text-align:center;font-size:26px;font-weight:700;color:${statusColor};margin-bottom:2px;">₦${formattedAmount}</div>
+          <div style="text-align:center;font-size:26px;font-weight:700;color:${statusColor};margin-bottom:2px;">₦${commaSeparated}</div>
           <div style="text-align:center;font-size:14px;font-weight:500;color:${statusColor};margin-bottom:6px;">${success ? "Successful" : "Failed"}</div>
           <div style="text-align:center;font-size:12px;color:#666;margin-bottom:20px;">${date || ""}</div>
           <hr style="border:0;border-top:1px solid #f0f0f0;margin:12px 0;">
