@@ -84,6 +84,22 @@ button:not(:disabled):active { transform: scale(0.96); }
 ::-webkit-scrollbar-thumb { background: rgb(0 0 0 / 0.15); border-radius: 9999px; }
 ::-webkit-scrollbar-thumb:hover { background: rgb(0 0 0 / 0.25); }
 
+/* Responsive layout for different screen sizes */
+@media (max-width: 768px) {
+  /* Mobile */
+  body { font-size: 14px; }
+}
+
+@media (min-width: 769px) and (max-width: 1028px) {
+  /* Tablet */
+  body { font-size: 15px; }
+}
+
+@media (min-width: 1029px) {
+  /* Desktop 1029px+ */
+  body { font-size: 16px; }
+}
+
 /* ---- Layout utilities ---- */
 .min-h-screen { min-height: 100vh; }
 .flex { display: flex; }
