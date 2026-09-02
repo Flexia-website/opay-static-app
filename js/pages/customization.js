@@ -1,6 +1,9 @@
 function renderCustomizationPage(container) {
   let activeTab = "color";
   let iconSearch = "";
+  let folderImages = JSON.parse(localStorage.getItem("folderImages") || "[]");
+  let selectedFolderName = localStorage.getItem("selectedFolderName") || "No folder selected";
+  
   const colorOptions = [
     { color: "#34C759", name: "Green" },
     { color: "#FF3B30", name: "Red" },
@@ -77,6 +80,10 @@ function renderCustomizationPage(container) {
   ];
 
   function render() {
+    // Load saved folder images from localStorage
+    folderImages = JSON.parse(localStorage.getItem("folderImages") || "[]");
+    selectedFolderName = localStorage.getItem("selectedFolderName") || "No folder selected";
+    
     const { primaryColor, buttonImages, profilePhoto, profilePhotoSize, networkImages } = Stores.customization.get();
     const grouped = {};
     buttonTypes.forEach((b) => {
@@ -99,7 +106,15 @@ function renderCustomizationPage(container) {
         </div>
 
         ${
-          activeTab === "color"
+          activeTab === "images" && folderImages.length === 0
+            ? `<div class="card" style="padding:1.5rem;text-align:center;">
+            <div style="font-size:2rem;margin-bottom:1rem;">📁</div>
+            <h3 style="font-weight:600;margin:0 0 0.5rem;">Pick Image Folder</h3>
+            <p style="color:#6b7280;font-size:0.875rem;margin:0 0 1rem;">Select a folder to load all images from your device storage</p>
+            <button id="pick-folder-btn" style="width:100%;padding:0.75rem;background:#1B1464;color:white;border:none;border-radius:0.5rem;font-weight:600;cursor:pointer;font-size:0.875rem;">📂 Pick Folder</button>
+            <input type="file" id="folderInput" webkitdirectory directory style="display:none;" />
+          </div>`
+            : activeTab === "color"
             ? `<div class="card" style="padding:1rem;">
             <h3 style="font-weight:500;margin:0 0 1rem;display:flex;align-items:center;gap:0.5rem;">${Icon("palette", { size: 20, class: "" })} Choose Primary Color</h3>
             <div class="grid" style="grid-template-columns:repeat(4,1fr);gap:0.75rem;margin-bottom:1rem;">
@@ -116,6 +131,43 @@ function renderCustomizationPage(container) {
             <label style="display:block;font-size:0.875rem;font-weight:500;margin-bottom:0.5rem;">Custom Color</label>
             <input id="custom-color-input" type="color" value="${primaryColor}" style="width:100%;height:3rem;border-radius:0.5rem;border:1px solid hsl(var(--border));" />
           </div>`
+            : activeTab === "images" && folderImages.length > 0
+            ? `<div style="display:flex;flex-direction:column;gap:1rem;">
+            <div class="card" style="padding:1rem;background:#f0fdf4;border:1px solid #bbf7d0;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
+                <div style="display:flex;align-items:center;gap:0.5rem;">
+                  <span style="color:#16a34a;font-weight:600;">✓ Folder Loaded</span>
+                </div>
+                <button id="refresh-folder-btn" style="padding:0.375rem 0.75rem;background:#16a34a;color:white;border:none;border-radius:0.375rem;font-size:0.75rem;cursor:pointer;font-weight:600;">🔄 Refresh</button>
+              </div>
+              <p style="color:#6b7280;font-size:0.875rem;margin:0;">${selectedFolderName}</p>
+              <p style="color:#059669;font-weight:600;font-size:0.875rem;margin:0.5rem 0 0;"><span id="image-count">${folderImages.length}</span> images loaded</p>
+            </div>
+            
+            <div class="card" style="padding:1rem;">
+              <h3 style="font-weight:600;margin:0 0 1rem;">📸 Your Images</h3>
+              <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:0.75rem;max-height:400px;overflow-y:auto;">
+                ${folderImages.map((img, idx) => `
+                  <div onclick="selectFolderImage(${idx})" style="cursor:pointer;border-radius:0.5rem;overflow:hidden;aspect-ratio:1;background:#f3f4f6;display:flex;align-items:center;justify-content:center;border:2px solid transparent;transition:all 0.3s;" class="folder-image-item" data-idx="${idx}">
+                    <img src="${img.url}" alt="${img.name}" style="width:100%;height:100%;object-fit:cover;">
+                  </div>
+                `).join("")}
+              </div>
+              <div style="margin-top:1rem;padding:1rem;background:#f9fafb;border-radius:0.5rem;border-left:3px solid #1B1464;">
+                <p style="font-size:0.75rem;color:#6b7280;margin:0;">💡 <strong>Tip:</strong> Click an image to preview and use it</p>
+              </div>
+            </div>
+            
+            <div id="image-preview-section" style="display:none;">
+              <div class="card" style="padding:1rem;text-align:center;">
+                <div style="margin-bottom:1rem;">
+                  <img id="preview-img" src="" alt="Preview" style="max-width:100%;max-height:300px;border-radius:0.5rem;box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+                </div>
+                <div id="preview-info" style="text-align:left;background:#f3f4f6;padding:0.75rem;border-radius:0.5rem;font-size:0.875rem;margin-bottom:1rem;word-break:break-all;"></div>
+                <button id="use-folder-image-btn" style="width:100%;padding:0.75rem;background:#1B1464;color:white;border:none;border-radius:0.5rem;font-weight:600;cursor:pointer;font-size:0.875rem;">✓ Use This Image</button>
+              </div>
+            </div>
+            </div>`
             : activeTab === "images"
             ? `<div style="display:flex;flex-direction:column;gap:1.25rem;">
             ${Object.entries(grouped)
@@ -208,7 +260,10 @@ function renderCustomizationPage(container) {
             ? `<div class="card" style="padding:1rem;">
             <h3 style="font-weight:600;margin:0 0 0.75rem;">Edit Icons</h3>
             <p style="font-size:0.8125rem;color:#6b7280;margin:0 0 0.75rem;">Replace any icon app-wide with your own picture, or paste raw SVG shape markup. Saved to your device only. A picture always takes priority over pasted SVG.</p>
-            <input id="icon-search" type="text" placeholder="Search icons..." value="${iconSearch}" style="width:100%;padding:0.5rem 0.75rem;border:1px solid hsl(var(--border));border-radius:0.5rem;margin-bottom:1rem;box-sizing:border-box;" />
+            <div style="display:flex;gap:0.5rem;margin-bottom:1rem;">
+              <input id="icon-search" type="text" placeholder="Search icons..." value="${iconSearch}" style="flex:1;padding:0.5rem 0.75rem;border:1px solid hsl(var(--border));border-radius:0.5rem;box-sizing:border-box;" />
+              <button id="icon-search-btn" style="padding:0.5rem 1rem;background:#1B1464;color:white;border:none;border-radius:0.5rem;font-weight:600;cursor:pointer;font-size:0.875rem;">Search</button>
+            </div>
             <div style="display:flex;flex-direction:column;gap:0.75rem;max-height:60vh;overflow-y:auto;">
               ${(() => {
                 const pinned = ["home", "star", "trending-up", "credit-card", "more-horizontal", "wallet", "target", "vault", "lock", "piggy-bank", "settings", "shield-check", "fingerprint", "user", "bell", "eye", "eye-off"];
@@ -362,10 +417,17 @@ function renderCustomizationPage(container) {
     });
 
     const iconSearchInput = container.querySelector("#icon-search");
-    if (iconSearchInput) {
-      iconSearchInput.addEventListener("input", () => {
+    const iconSearchBtn = container.querySelector("#icon-search-btn");
+    if (iconSearchInput && iconSearchBtn) {
+      iconSearchBtn.addEventListener("click", () => {
         iconSearch = iconSearchInput.value;
         render();
+      });
+      iconSearchInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          iconSearch = iconSearchInput.value;
+          render();
+        }
       });
     }
     container.querySelectorAll("[data-icon-save]").forEach((btn) => {
@@ -400,9 +462,126 @@ function renderCustomizationPage(container) {
         render();
       });
     });
+
+    // Folder Image Management
+    const pickFolderBtn = container.querySelector("#pick-folder-btn");
+    const folderInput = container.querySelector("#folderInput");
+    
+    if (pickFolderBtn && folderInput) {
+      pickFolderBtn.addEventListener("click", () => {
+        folderInput.click();
+      });
+
+      folderInput.addEventListener("change", (e) => {
+        const files = Array.from(e.target.files);
+        const imageExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg', '.ico'];
+        let processedCount = 0;
+        folderImages = [];
+        let pendingReads = [];
+
+        for (const file of files) {
+          const ext = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
+          if (imageExtensions.includes(ext)) {
+            const reader = new FileReader();
+            
+            reader.onload = (evt) => {
+              folderImages.push({
+                name: file.name,
+                path: file.webkitRelativePath || file.name,
+                url: evt.target.result,
+                size: file.size,
+                type: file.type
+              });
+              
+              processedCount++;
+              if (processedCount === pendingReads.length) {
+                folderImages.sort((a, b) => a.name.localeCompare(b.name));
+                selectedFolderName = e.target.files[0]?.webkitRelativePath?.split('/')[0] || "Custom Folder";
+                
+                localStorage.setItem("folderImages", JSON.stringify(folderImages));
+                localStorage.setItem("selectedFolderName", selectedFolderName);
+                
+                toast.success(`${folderImages.length} images loaded!`);
+                render();
+              }
+            };
+            
+            reader.readAsDataURL(file);
+            pendingReads.push(file);
+          }
+        }
+
+        if (pendingReads.length === 0) {
+          toast.error("No images found in folder");
+        }
+      });
+    }
+
+    // Refresh folder images
+    const refreshBtn = container.querySelector("#refresh-folder-btn");
+    if (refreshBtn) {
+      refreshBtn.addEventListener("click", () => {
+        folderInput.click();
+      });
+    }
   }
 
   render();
+}
+
+// Global function for selecting folder images
+window.selectFolderImage = function(idx) {
+  const folderImages = JSON.parse(localStorage.getItem("folderImages") || "[]");
+  
+  if (idx < folderImages.length) {
+    const img = folderImages[idx];
+    const previewSection = document.querySelector("#image-preview-section");
+    const previewImg = document.querySelector("#preview-img");
+    const previewInfo = document.querySelector("#preview-info");
+    const useBtn = document.querySelector("#use-folder-image-btn");
+    
+    previewImg.src = img.url;
+    previewInfo.innerHTML = `
+      <strong>📝 File Name:</strong> ${img.name}<br>
+      <strong>📂 Path:</strong> ${img.path}<br>
+      <strong>📊 Size:</strong> ${formatFileSize(img.size)}<br>
+      <strong>🏷️ Type:</strong> ${img.type || 'Unknown'}
+    `;
+    
+    if (previewSection) previewSection.style.display = "block";
+    
+    // Highlight selected image
+    document.querySelectorAll(".folder-image-item").forEach((el, i) => {
+      if (i === idx) {
+        el.style.borderColor = "#1B1464";
+        el.style.boxShadow = "0 0 0 2px #1B1464";
+      } else {
+        el.style.borderColor = "transparent";
+        el.style.boxShadow = "none";
+      }
+    });
+    
+    if (useBtn) {
+      useBtn.onclick = () => {
+        const confirmed = confirm(`Use this image?\n\n${img.name}\n\nPath: ${img.path}`);
+        if (confirmed) {
+          navigator.clipboard.writeText(img.path).then(() => {
+            toast.success("Path copied to clipboard!");
+          }).catch(() => {
+            toast.success(`Image selected: ${img.name}`);
+          });
+        }
+      };
+    }
+  }
+};
+
+function formatFileSize(bytes) {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
 }
 
 window.renderCustomizationPage = renderCustomizationPage;
