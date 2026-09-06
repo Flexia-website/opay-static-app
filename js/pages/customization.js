@@ -79,6 +79,35 @@ function renderCustomizationPage(container) {
     { key: "svc-virtual-card", label: "Virtual Card", description: "Virtual Card tile on the All Service page", section: "All Service — Others" },
   ];
 
+  // Helper function to convert hex to RGB
+  function hexToRgb(hex) {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+    } : null;
+  }
+
+  // Helper function to convert RGB to hex
+  function rgbToHex(r, g, b) {
+    return "#" + [r, g, b].map(x => {
+      const hex = x.toString(16);
+      return hex.length === 1 ? "0" + hex : hex;
+    }).join("").toUpperCase();
+  }
+
+  // Helper function to validate hex color
+  function isValidHex(hex) {
+    return /^#[0-9A-F]{6}$/i.test(hex);
+  }
+
+  // Helper function to validate RGB values
+  function isValidRgb(r, g, b) {
+    return !isNaN(r) && !isNaN(g) && !isNaN(b) && 
+           r >= 0 && r <= 255 && g >= 0 && g <= 255 && b >= 0 && b <= 255;
+  }
+
   function render() {
     // Load saved folder images from localStorage
     folderImages = JSON.parse(localStorage.getItem("folderImages") || "[]");
@@ -117,19 +146,62 @@ function renderCustomizationPage(container) {
             : activeTab === "color"
             ? `<div class="card" style="padding:1rem;">
             <h3 style="font-weight:500;margin:0 0 1rem;display:flex;align-items:center;gap:0.5rem;">${Icon("palette", { size: 20, class: "" })} Choose Primary Color</h3>
-            <div class="grid" style="grid-template-columns:repeat(4,1fr);gap:0.75rem;margin-bottom:1rem;">
-              ${colorOptions
-                .map(
-                  (c) => `
-                <button data-color="${c.color}" style="display:flex;flex-direction:column;align-items:center;gap:0.5rem;background:none;border:none;">
-                  <div style="width:3rem;height:3rem;border-radius:9999px;background:${c.color};border:${primaryColor === c.color ? "3px solid #111827" : "none"};"></div>
-                  <span style="font-size:0.75rem;">${c.name}</span>
-                </button>`
-                )
-                .join("")}
+            
+            <!-- Preset Colors -->
+            <div>
+              <label style="display:block;font-size:0.875rem;font-weight:600;margin-bottom:0.5rem;">Preset Colors</label>
+              <div class="grid" style="grid-template-columns:repeat(4,1fr);gap:0.75rem;margin-bottom:1.5rem;">
+                ${colorOptions
+                  .map(
+                    (c) => `
+                  <button data-color="${c.color}" style="display:flex;flex-direction:column;align-items:center;gap:0.5rem;background:none;border:none;cursor:pointer;">
+                    <div style="width:3rem;height:3rem;border-radius:9999px;background:${c.color};border:${primaryColor === c.color ? "3px solid #111827" : "none"};"></div>
+                    <span style="font-size:0.75rem;">${c.name}</span>
+                  </button>`
+                  )
+                  .join("")}
+              </div>
             </div>
-            <label style="display:block;font-size:0.875rem;font-weight:500;margin-bottom:0.5rem;">Custom Color</label>
-            <input id="custom-color-input" type="color" value="${primaryColor}" style="width:100%;height:3rem;border-radius:0.5rem;border:1px solid hsl(var(--border));" />
+
+            <!-- Color Picker Section -->
+            <div style="border-top:1px solid #e5e7eb;padding-top:1rem;">
+              <label style="display:block;font-size:0.875rem;font-weight:600;margin-bottom:0.75rem;">Color Picker</label>
+              <input id="custom-color-input" type="color" value="${primaryColor}" style="width:100%;height:3rem;border-radius:0.5rem;border:1px solid #d1d5db;cursor:pointer;" />
+            </div>
+
+            <!-- Hex Code Input -->
+            <div style="margin-top:1rem;">
+              <label style="display:block;font-size:0.875rem;font-weight:600;margin-bottom:0.5rem;">Hex Code</label>
+              <input id="hex-input" type="text" placeholder="#000000" value="${primaryColor}" maxlength="7" style="width:100%;padding:0.5rem;border:1px solid #d1d5db;border-radius:0.5rem;font-family:monospace;font-size:0.875rem;" />
+              <p id="hex-error" style="color:#ef4444;font-size:0.75rem;margin:0.25rem 0 0;display:none;">Invalid hex code (use format: #RRGGBB)</p>
+            </div>
+
+            <!-- RGB Code Input -->
+            <div style="margin-top:1rem;">
+              <label style="display:block;font-size:0.875rem;font-weight:600;margin-bottom:0.5rem;">RGB Values</label>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;">
+                <div>
+                  <label style="display:block;font-size:0.75rem;color:#6b7280;margin-bottom:0.25rem;">Red (0-255)</label>
+                  <input id="rgb-r" type="number" min="0" max="255" value="${hexToRgb(primaryColor)?.r || 0}" style="width:100%;padding:0.5rem;border:1px solid #d1d5db;border-radius:0.5rem;font-size:0.875rem;" />
+                </div>
+                <div>
+                  <label style="display:block;font-size:0.75rem;color:#6b7280;margin-bottom:0.25rem;">Green (0-255)</label>
+                  <input id="rgb-g" type="number" min="0" max="255" value="${hexToRgb(primaryColor)?.g || 0}" style="width:100%;padding:0.5rem;border:1px solid #d1d5db;border-radius:0.5rem;font-size:0.875rem;" />
+                </div>
+                <div>
+                  <label style="display:block;font-size:0.75rem;color:#6b7280;margin-bottom:0.25rem;">Blue (0-255)</label>
+                  <input id="rgb-b" type="number" min="0" max="255" value="${hexToRgb(primaryColor)?.b || 0}" style="width:100%;padding:0.5rem;border:1px solid #d1d5db;border-radius:0.5rem;font-size:0.875rem;" />
+                </div>
+              </div>
+              <p id="rgb-error" style="color:#ef4444;font-size:0.75rem;margin:0.25rem 0 0;display:none;">Invalid RGB values (0-255)</p>
+            </div>
+
+            <!-- Color Preview -->
+            <div style="margin-top:1rem;padding:1rem;background:#f9fafb;border-radius:0.5rem;border:1px solid #e5e7eb;">
+              <p style="font-size:0.75rem;color:#6b7280;margin:0 0 0.5rem;font-weight:600;">Preview</p>
+              <div style="width:100%;height:2rem;border-radius:0.5rem;background:${primaryColor};border:1px solid #d1d5db;"></div>
+              <p id="color-display" style="font-size:0.75rem;color:#6b7280;margin:0.5rem 0 0;text-align:center;font-family:monospace;">${primaryColor}</p>
+            </div>
           </div>`
             : activeTab === "images" && folderImages.length > 0
             ? `<div style="display:flex;flex-direction:column;gap:1rem;">
@@ -349,11 +421,77 @@ function renderCustomizationPage(container) {
       });
     });
     const customColorInput = container.querySelector("#custom-color-input");
+    const hexInput = container.querySelector("#hex-input");
+    const rgbRInput = container.querySelector("#rgb-r");
+    const rgbGInput = container.querySelector("#rgb-g");
+    const rgbBInput = container.querySelector("#rgb-b");
+    const hexError = container.querySelector("#hex-error");
+    const rgbError = container.querySelector("#rgb-error");
+    const colorDisplay = container.querySelector("#color-display");
+
     if (customColorInput) {
       customColorInput.addEventListener("input", () => {
-        Stores.customization.set({ primaryColor: customColorInput.value });
+        const color = customColorInput.value;
+        Stores.customization.set({ primaryColor: color });
+        // Update hex and RGB inputs
+        if (hexInput) hexInput.value = color;
+        const rgb = hexToRgb(color);
+        if (rgb) {
+          if (rgbRInput) rgbRInput.value = rgb.r;
+          if (rgbGInput) rgbGInput.value = rgb.g;
+          if (rgbBInput) rgbBInput.value = rgb.b;
+        }
+        if (hexError) hexError.style.display = "none";
+        if (rgbError) rgbError.style.display = "none";
+        if (colorDisplay) colorDisplay.textContent = color;
       });
     }
+
+    // Hex input listener
+    if (hexInput) {
+      hexInput.addEventListener("input", () => {
+        const hex = hexInput.value.trim().toUpperCase();
+        if (!hex.startsWith("#")) hexInput.value = "#" + hex.replace("#", "");
+        
+        if (isValidHex(hexInput.value)) {
+          const color = hexInput.value;
+          Stores.customization.set({ primaryColor: color });
+          if (customColorInput) customColorInput.value = color;
+          const rgb = hexToRgb(color);
+          if (rgb) {
+            if (rgbRInput) rgbRInput.value = rgb.r;
+            if (rgbGInput) rgbGInput.value = rgb.g;
+            if (rgbBInput) rgbBInput.value = rgb.b;
+          }
+          if (hexError) hexError.style.display = "none";
+          if (colorDisplay) colorDisplay.textContent = color;
+        } else if (hexInput.value.length === 7) {
+          if (hexError) hexError.style.display = "block";
+        }
+      });
+    }
+
+    // RGB input listeners
+    const updateFromRGB = () => {
+      const r = parseInt(rgbRInput?.value || 0);
+      const g = parseInt(rgbGInput?.value || 0);
+      const b = parseInt(rgbBInput?.value || 0);
+      
+      if (isValidRgb(r, g, b)) {
+        const hex = rgbToHex(r, g, b);
+        Stores.customization.set({ primaryColor: hex });
+        if (customColorInput) customColorInput.value = hex;
+        if (hexInput) hexInput.value = hex;
+        if (rgbError) rgbError.style.display = "none";
+        if (colorDisplay) colorDisplay.textContent = hex;
+      } else if (rgbRInput.value !== "" || rgbGInput.value !== "" || rgbBInput.value !== "") {
+        if (rgbError) rgbError.style.display = "block";
+      }
+    };
+
+    if (rgbRInput) rgbRInput.addEventListener("change", updateFromRGB);
+    if (rgbGInput) rgbGInput.addEventListener("change", updateFromRGB);
+    if (rgbBInput) rgbBInput.addEventListener("change", updateFromRGB);
 
     container.querySelectorAll("[data-upload]").forEach((input) => {
       input.addEventListener("change", (e) => {
