@@ -47,7 +47,7 @@ function renderDashboard(container) {
     <div style="background:${primaryColor};margin:0.625rem 0.75rem 0;padding:1rem;border-radius:1.125rem;color:white;box-shadow:0 6px 20px -6px ${primaryColor}80;">
       <div class="flex justify-between items-center" style="margin-bottom:0.75rem;">
         <div class="flex items-center" style="gap:5px;">
-          ${Icon("shield-check", { size: 16 })}
+          ${iconOrImage("shield-check", "balance-shield", 16)}
           <span style="font-size:0.8125rem;font-weight:700;">Available Balance</span>
           <button id="toggle-balance" style="display:flex;align-items:center;justify-content:center;border:none;background:none;color:rgba(255,255,255,0.85);padding:0;">
             ${Icon(showBalance ? "eye" : "eye-off", { size: 15 })}
@@ -57,7 +57,9 @@ function renderDashboard(container) {
       </div>
       <div class="flex justify-between items-center">
         <h2 id="balance-amount" style="font-size:1.75rem;font-weight:800;margin:0;letter-spacing:0.02em;">${showBalance ? "₦" + formatBalance(balance) : "****"}</h2>
-
+        <button id="add-money-btn" style="background:white;color:${primaryColor};padding:0.5rem 1.1rem;border-radius:9999px;font-size:0.8125rem;font-weight:700;border:none;display:flex;align-items:center;gap:4px;">
+          ${iconOrImage("plus", "add-money", 14)} Add Money
+        </button>
       </div>
     </div>`;
   }
@@ -168,7 +170,7 @@ function renderDashboard(container) {
 
       <div style="margin:0.625rem 0.75rem 0;background:white;padding:0.875rem 1rem;border-radius:1.125rem;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 2px rgb(0 0 0 / 0.04);">
         <div class="flex items-center" style="gap:0.625rem;">
-          <div style="color:${primaryColor};">${Icon("bell", { size: 26 })}</div>
+          <div style="color:${primaryColor};">${iconOrImage("mail", "stay-informed", 26)}</div>
           <div>
             <h3 style="font-weight:700;font-size:0.875rem;margin:0;">Take Control, Stay Informed</h3>
             <p style="font-size:0.75rem;color:#6b7280;margin:2px 0 0;">Add your email, get the latest from OPay</p>
@@ -258,6 +260,12 @@ function renderDashboard(container) {
       if (viewAll) viewAll.addEventListener("click", (e) => {
         e.preventDefault();
         navigate("/transaction-history");
+      });
+
+      const addMoneyBtn = container.querySelector("#add-money-btn");
+      if (addMoneyBtn) addMoneyBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        showAddMoneyModal();
       });
     }, 0);
   }
