@@ -1,3 +1,13 @@
+// Format balance to display decimals properly
+function formatBalanceAmount(balance) {
+  if (typeof balance !== 'number') balance = parseFloat(balance) || 0;
+  const isDecimal = balance % 1 !== 0;
+  if (isDecimal) {
+    return balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  return Math.floor(balance).toLocaleString();
+}
+
 function BalanceAdjusterHtml() {
   const { balance } = Stores.balance.get();
   const { primaryColor } = Stores.customization.get();
@@ -9,7 +19,7 @@ function BalanceAdjusterHtml() {
     </div>
     <div style="margin-bottom:1rem;">
       <label style="display:block;font-size:0.875rem;color:#6b7280;margin-bottom:0.25rem;">Current Balance</label>
-      <div style="font-size:1.125rem;font-weight:600;">₦${balance.toLocaleString()}</div>
+      <div style="font-size:1.125rem;font-weight:600;">₦${formatBalanceAmount(balance)}</div>
     </div>
     <div style="margin-bottom:1rem;">
       <label style="display:block;font-size:0.875rem;color:#6b7280;margin-bottom:0.25rem;">Operation</label>
@@ -107,15 +117,15 @@ function bindBalanceAdjuster(container, onClose) {
     if (operation === "add") {
       const sender = senderInput.value.trim() ? senderInput.value.trim() : "Self Deposit";
       Stores.transaction.addCreditAlert(sender, amountValue);
-      toast.success(`₦${amountValue.toLocaleString()} added to your balance from ${sender}`);
+      toast.success(`₦${formatBalanceAmount(amountValue)} added to your balance from ${sender}`);
     } else {
       Stores.transaction.addTransaction({
         type: "Balance Withdrawal",
-        amount: `-₦${amountValue.toLocaleString()}`,
+        amount: `-₦${formatBalanceAmount(amountValue)}`,
         status: "Successful",
         icon: "minus-circle",
       });
-      toast.success(`₦${amountValue.toLocaleString()} withdrawn from your balance`);
+      toast.success(`₦${formatBalanceAmount(amountValue)} withdrawn from your balance`);
     }
     onClose();
   });
