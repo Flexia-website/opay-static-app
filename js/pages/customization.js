@@ -493,37 +493,43 @@ function renderCustomizationPage(container) {
     if (rgbGInput) rgbGInput.addEventListener("change", updateFromRGB);
     if (rgbBInput) rgbBInput.addEventListener("change", updateFromRGB);
 
-    container.querySelectorAll("[data-upload]").forEach((input) => {
-      input.addEventListener("change", (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-          const url = evt.target.result;
-          const key = input.dataset.upload;
+    // Attach upload listeners after render completes
+    setTimeout(() => {
+      container.querySelectorAll("[data-upload]").forEach((input) => {
+        input.addEventListener("change", (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = (evt) => {
+            const url = evt.target.result;
+            const key = input.dataset.upload;
+            if (key === "profile") {
+              Stores.customization.set({ profilePhoto: url });
+              toast.success("Profile photo updated successfully");
+            } else {
+              Stores.customization.setButtonImage(key, url);
+              toast.success(`${key} image updated successfully`);
+            }
+            render();
+          };
+          reader.readAsDataURL(file);
+        });
+      });
+      
+      container.querySelectorAll("[data-reset]").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const key = btn.dataset.reset;
           if (key === "profile") {
-            Stores.customization.set({ profilePhoto: url });
-            toast.success("Profile photo updated successfully");
+            Stores.customization.set({ profilePhoto: "" });
           } else {
-            Stores.customization.setButtonImage(key, url);
-            toast.success(`${key} image updated successfully`);
+            Stores.customization.resetButtonImage(key);
           }
           render();
-        };
-        reader.readAsDataURL(file);
+        });
       });
-    });
-    container.querySelectorAll("[data-reset]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const key = btn.dataset.reset;
-        if (key === "profile") {
-          Stores.customization.set({ profilePhoto: "" });
-        } else {
-          Stores.customization.resetButtonImage(key);
-        }
-        render();
-      });
-    });
+    }, 0);
     const profileSizeSlider = container.querySelector("#profile-size-slider");
     if (profileSizeSlider) {
       profileSizeSlider.addEventListener("input", (e) => {
@@ -568,38 +574,53 @@ function renderCustomizationPage(container) {
         }
       });
     }
-    container.querySelectorAll("[data-icon-save]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const key = btn.dataset.iconSave;
-        const textarea = container.querySelector(`[data-icon-key="${key}"]`);
-        setCustomIcon(key, textarea.value);
-        toast.success(`"${key}" icon updated`);
-        render();
-      });
-    });
-    container.querySelectorAll("[data-icon-image]").forEach((input) => {
-      input.addEventListener("change", (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        const key = input.dataset.iconImage;
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-          setCustomIconImage(key, evt.target.result);
-          toast.success(`"${key}" icon picture updated`);
+    // Use setTimeout to ensure DOM elements are fully rendered before attaching listeners
+    setTimeout(() => {
+      container.querySelectorAll("[data-icon-save]").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const key = btn.dataset.iconSave;
+          const textarea = container.querySelector(`[data-icon-key="${key}"]`);
+          if (!textarea) return;
+          const value = textarea.value.trim();
+          if (!value) {
+            toast.error("Please paste SVG code or upload an image");
+            return;
+          }
+          setCustomIcon(key, value);
+          toast.success(`"${key}" icon updated`);
           render();
-        };
-        reader.readAsDataURL(file);
+        });
       });
-    });
-    container.querySelectorAll("[data-icon-reset]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const key = btn.dataset.iconReset;
-        resetCustomIconImage(key);
-        resetCustomIcon(key);
-        toast.success(`"${key}" icon reset to default`);
-        render();
+      
+      container.querySelectorAll("[data-icon-image]").forEach((input) => {
+        input.addEventListener("change", (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+          const key = input.dataset.iconImage;
+          const reader = new FileReader();
+          reader.onload = (evt) => {
+            setCustomIconImage(key, evt.target.result);
+            toast.success(`"${key}" icon picture updated`);
+            render();
+          };
+          reader.readAsDataURL(file);
+        });
       });
-    });
+      
+      container.querySelectorAll("[data-icon-reset]").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const key = btn.dataset.iconReset;
+          resetCustomIconImage(key);
+          resetCustomIcon(key);
+          toast.success(`"${key}" icon reset to default`);
+          render();
+        });
+      });
+    }, 0);
 
     // Folder Image Management
     const pickFolderBtn = container.querySelector("#pick-folder-btn");
