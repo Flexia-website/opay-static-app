@@ -32,11 +32,14 @@ function renderDashboard(container) {
   ];
 
   function iconOrImage(iconName, key, size = 22) {
+    // First check buttonImages (profile/logo uploads)
     const img = buttonImages[key];
     if (img) {
       return `<img src="${img}" alt="${key}" style="width:${size}px;height:${size}px;object-fit:cover;border-radius:9999px;" />`;
     }
-    return `<span style="color:${primaryColor};display:flex;">${Icon(iconName, { size, strokeWidth: 2 })}</span>`;
+    // Then use Icon function which checks custom icons and images from customization
+    const iconHtml = Icon(iconName, { size, strokeWidth: 2 });
+    return `<span style="color:${primaryColor};display:flex;">${iconHtml}</span>`;
   }
 
   function renderBalanceCard() {
@@ -221,26 +224,42 @@ function renderDashboard(container) {
       container.querySelector("#tx-card-wrap").innerHTML = renderTransactionsCard();
       rebindDynamic();
     });
-    container.querySelectorAll("[data-nav]").forEach((btn) => {
-      btn.addEventListener("click", () => navigate(btn.dataset.nav));
-    });
+    // Attach navigation listeners after DOM is ready
+    setTimeout(() => {
+      container.querySelectorAll("[data-nav]").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          navigate(btn.dataset.nav);
+        });
+      });
+    }, 0);
   }
 
   function rebindDynamic() {
-    const toggleBtn = container.querySelector("#toggle-balance");
-    if (toggleBtn) {
-      toggleBtn.addEventListener("click", () => {
-        showBalance = !showBalance;
-        container.querySelector("#balance-card-wrap").innerHTML = renderBalanceCard();
-        container.querySelector("#tx-card-wrap").innerHTML = renderTransactionsCard();
-        rebindDynamic();
+    setTimeout(() => {
+      const toggleBtn = container.querySelector("#toggle-balance");
+      if (toggleBtn) {
+        toggleBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          showBalance = !showBalance;
+          container.querySelector("#balance-card-wrap").innerHTML = renderBalanceCard();
+          container.querySelector("#tx-card-wrap").innerHTML = renderTransactionsCard();
+          rebindDynamic();
+        });
+      }
+      const link = container.querySelector("#tx-history-link");
+      if (link) link.addEventListener("click", (e) => {
+        e.preventDefault();
+        navigate("/transaction-history");
       });
-    }
-    const link = container.querySelector("#tx-history-link");
-    if (link) link.addEventListener("click", () => navigate("/transaction-history"));
 
-    const viewAll = container.querySelector("#tx-view-all");
-    if (viewAll) viewAll.addEventListener("click", () => navigate("/transaction-history"));
+      const viewAll = container.querySelector("#tx-view-all");
+      if (viewAll) viewAll.addEventListener("click", (e) => {
+        e.preventDefault();
+        navigate("/transaction-history");
+      });
+    }, 0);
   }
 
   container.innerHTML = fullHtml();
