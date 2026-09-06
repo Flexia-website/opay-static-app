@@ -25,8 +25,8 @@ function renderSpendSavePage(container) {
           <span style="font-size:0.9375rem;color:#111827;">Spend &amp; Save</span>
           <span style="background:#111827;color:white;font-size:0.6875rem;font-weight:700;padding:2px 8px;border-radius:9999px;">Up to 15% p.a</span>
         </div>
-        <div style="font-size:2rem;font-weight:800;color:#111827;">₦${balance.toFixed(2)}</div>
-        <div style="font-size:0.8125rem;color:#4b5563;margin-top:2px;">Total Interest: <strong>₦${interest.toFixed(2)}</strong> ${Icon("chevron-right", { size: 12, class: "" })}</div>
+        <div style="font-size:2rem;font-weight:800;color:#111827;">₦${formatMoney(balance.toFixed(2))}</div>
+        <div style="font-size:0.8125rem;color:#4b5563;margin-top:2px;">Total Interest: <strong>₦${formatMoney(interest.toFixed(2))}</strong> ${Icon("chevron-right", { size: 12, class: "" })}</div>
       </div>
       <div style="color:${primaryColor};opacity:0.8;">${Icon("piggy-bank", { size: 56 })}</div>
     </div>

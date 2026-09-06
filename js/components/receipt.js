@@ -26,13 +26,11 @@ function copyToClipboard(text) {
   }
 }
 
+// formatNumberWithCommas kept as a thin alias for backward compatibility;
+// the real logic now lives in the shared window.formatMoney (js/utils.js)
+// so every page/component formats amounts identically.
 function formatNumberWithCommas(num) {
-  const str = String(num).replace(/\D/g, '');
-  const numValue = parseInt(str, 10);
-  if (numValue < 1000) {
-    return str;
-  }
-  return str.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return formatMoney(num);
 }
 
 function generateTransactionId() {
@@ -232,7 +230,7 @@ function showTransactionReceipt({ amount, success = true, date, details = [], on
       <div style="position:relative;overflow:visible;background:#fff;margin:15px;padding:20px;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.04);">
         ${logoBadge}
         <div style="text-align:center;margin-top:25px;margin-bottom:10px;font-weight:500;font-size:16px;">${title || `Transfer to ${recipientName || "Recipient"}`}</div>
-        <div style="text-align:center;font-size:32px;font-weight:700;letter-spacing:0.5px;color:#000;">₦${formattedAmount}</div>
+        <div style="text-align:center;font-size:32px;font-weight:700;letter-spacing:0.5px;color:#000;">₦${formatMoney(formattedAmount)}</div>
         <div style="color:${statusColor};text-align:center;font-weight:500;margin-top:5px;font-size:15px;display:flex;justify-content:center;align-items:center;gap:6px;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg> ${success ? "Successful" : "Failed"}
         </div>
@@ -299,7 +297,7 @@ function showTransactionReceipt({ amount, success = true, date, details = [], on
       <div style="position:relative;overflow:visible;background:#fff;margin:15px;padding:20px;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.04);">
         ${logoBadge}
         <div style="text-align:center;margin-top:25px;margin-bottom:10px;font-weight:500;font-size:16px;">${title || "Purchase"}</div>
-        <div style="text-align:center;font-size:32px;font-weight:700;letter-spacing:0.5px;color:#000;">₦${formattedAmount}</div>
+        <div style="text-align:center;font-size:32px;font-weight:700;letter-spacing:0.5px;color:#000;">₦${formatMoney(formattedAmount)}</div>
         <div style="color:${statusColor};text-align:center;font-weight:500;margin-top:5px;font-size:15px;display:flex;justify-content:center;align-items:center;gap:6px;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg> ${success ? "Successful" : "Failed"}
         </div>
@@ -368,6 +366,8 @@ function showTransactionReceipt({ amount, success = true, date, details = [], on
 }
 
 function showShareReceipt({ amount, success, date, details = [], title = "Transaction Receipt" }) {
+  const primaryColor = Stores.customization.get().primaryColor;
+  const formattedShareAmount = formatNumberWithCommas(String(amount).replace(/^[-+]/, "").replace(/^₦/, "").trim());
   const overlay = document.createElement("div");
   overlay.className = "overlay";
   overlay.style.position = "fixed";
@@ -380,7 +380,7 @@ function showShareReceipt({ amount, success, date, details = [], title = "Transa
     return String(value).split("<br/>").join("<br/>");
   }
 
-  const watermarkTile = `<span style="display:inline-flex;align-items:center;gap:0.2rem;min-width:6rem;justify-content:center;padding:1.1rem 0.75rem;"><img src="./assets/opay-logo.png" alt="" style="width:14px;height:14px;object-fit:contain;opacity:0.9;" /><span style="color:#10b981;font-weight:800;font-size:0.9375rem;">Pay</span></span>`;
+  const watermarkTile = `<span style="display:inline-flex;align-items:center;gap:0.2rem;min-width:6rem;justify-content:center;padding:1.1rem 0.75rem;"><img src="./assets/opay-logo.png" alt="" style="width:14px;height:14px;object-fit:contain;opacity:0.9;" /><span style="color:${primaryColor};font-weight:800;font-size:0.9375rem;">Pay</span></span>`;
   const watermarkRows = Array.from({ length: 9 })
     .map((_, row) => `
       <div style="display:flex;white-space:nowrap;margin-left:${row % 2 === 0 ? '-2rem' : '-4rem'};">
@@ -401,7 +401,7 @@ function showShareReceipt({ amount, success, date, details = [], title = "Transa
     </header>
 
     <div style="padding:1.5rem 1rem;margin-top:0.5rem;position:relative;z-index:1;min-height:calc(100vh - 8rem);">
-      <div id="receipt-capture" style="position:relative;background:white;border-radius:1rem;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.08);z-index:1;padding:2rem 1.5rem;">
+      <div id="receipt-capture" style="position:relative;background:white;border-radius:1rem;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.08);z-index:1;padding:2rem 1.25rem;">
         ${watermarkHtml}
         <div style="position:relative;z-index:2;">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;">
@@ -413,7 +413,7 @@ function showShareReceipt({ amount, success, date, details = [], title = "Transa
           </div>
 
           <div style="text-align:center;margin-bottom:2rem;">
-            <div style="font-size:2.5rem;font-weight:800;color:#10b981;margin-bottom:0.5rem;letter-spacing:-0.01em;">₦${amount}</div>
+            <div style="font-size:2.5rem;font-weight:800;color:${primaryColor};margin-bottom:0.5rem;letter-spacing:-0.01em;">₦${formattedShareAmount}</div>
             <div style="font-size:1.0625rem;color:#111827;margin-bottom:0.5rem;font-weight:600;">${success ? "Successful" : "Failed"}</div>
             <div style="font-size:0.875rem;color:#9ca3af;">${date}</div>
           </div>
@@ -450,10 +450,10 @@ function showShareReceipt({ amount, success, date, details = [], title = "Transa
     </div>
 
     <div style="padding:1.5rem 1rem 2rem;display:flex;gap:1rem;justify-content:center;">
-      <button id="share-as-image" style="background:none;border:1px solid #d1fae5;display:flex;align-items:center;justify-content:center;gap:0.5rem;color:#10b981;font-weight:600;font-size:0.875rem;cursor:pointer;padding:0.75rem 1.5rem;border-radius:0.5rem;">
+      <button id="share-as-image" style="background:none;border:1px solid ${primaryColor}33;display:flex;align-items:center;justify-content:center;gap:0.5rem;color:${primaryColor};font-weight:600;font-size:0.875rem;cursor:pointer;padding:0.75rem 1.5rem;border-radius:0.5rem;">
         ${Icon("image", { size: 16 })} Share as image
       </button>
-      <button id="share-as-pdf" style="background:none;border:1px solid #d1fae5;display:flex;align-items:center;justify-content:center;gap:0.5rem;color:#10b981;font-weight:600;font-size:0.875rem;cursor:pointer;padding:0.75rem 1.5rem;border-radius:0.5rem;">
+      <button id="share-as-pdf" style="background:none;border:1px solid ${primaryColor}33;display:flex;align-items:center;justify-content:center;gap:0.5rem;color:${primaryColor};font-weight:600;font-size:0.875rem;cursor:pointer;padding:0.75rem 1.5rem;border-radius:0.5rem;">
         ${Icon("file-text", { size: 16 })} Share as PDF
       </button>
     </div>
@@ -558,7 +558,7 @@ function showPinModal({ amount, recipientLabel, onConfirm, onCancel }) {
   overlay.innerHTML = `
     <div style="background:white;border-radius:0.75rem;padding:1rem;width:100%;max-width:20rem;position:relative;z-index:101;">
       <h3 style="font-size:1.125rem;font-weight:600;margin:0 0 1rem;">Enter Transaction PIN</h3>
-      <p style="font-size:0.875rem;color:#6b7280;margin:0 0 1rem;">You are about to transfer ₦${amount} to ${recipientLabel}</p>
+      <p style="font-size:0.875rem;color:#6b7280;margin:0 0 1rem;">You are about to transfer ₦${formatMoney(amount)} to ${recipientLabel}</p>
       <div style="position:relative;margin-bottom:1rem;">
         <div style="display:flex;gap:0.5rem;justify-content:center;">
           <div style="width:2.5rem;height:2.5rem;border-radius:0.5rem;border:2px solid #d1d5db;display:flex;align-items:center;justify-content:center;font-size:1.25rem;color:transparent;font-weight:700;" data-pin-digit="1">•</div>
@@ -656,7 +656,7 @@ function showConfirmationModal({ title, amount, details = [], onConfirm, onCance
           ${Icon(icon, { size: 24 })}
         </div>
         <h2 style="font-size:1rem;font-weight:700;margin:0 0 0.5rem;color:#111827;">${title}</h2>
-        <div style="font-size:2rem;font-weight:800;color:#111827;margin-bottom:0.5rem;letter-spacing:-0.01em;">₦${amount}</div>
+        <div style="font-size:2rem;font-weight:800;color:#111827;margin-bottom:0.5rem;letter-spacing:-0.01em;">₦${formatMoney(amount)}</div>
       </div>
       <div style="background:#f9fafb;border-radius:0.75rem;padding:1rem;margin-bottom:1.5rem;max-height:10rem;overflow-y:auto;">
         ${detailsHtml || '<p style="text-align:center;color:#9ca3af;font-size:0.875rem;margin:0;">Review details carefully before confirming</p>'}

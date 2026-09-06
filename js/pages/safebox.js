@@ -170,15 +170,15 @@ function renderSafeboxDepositPage(container) {
           <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:1rem;">
             <div class="card" style="padding:1rem;text-align:center;">
               <p style="color:#4b5563;font-size:0.875rem;margin:0 0 0.5rem;">Daily</p>
-              <p style="color:#9333ea;font-weight:700;font-size:1.125rem;margin:0;">₦${dailyInterest.toFixed(2)}</p>
+              <p style="color:#9333ea;font-weight:700;font-size:1.125rem;margin:0;">₦${formatMoney(dailyInterest.toFixed(2))}</p>
             </div>
             <div class="card" style="padding:1rem;text-align:center;">
               <p style="color:#4b5563;font-size:0.875rem;margin:0 0 0.5rem;">Monthly</p>
-              <p style="color:#9333ea;font-weight:700;font-size:1.125rem;margin:0;">₦${monthlyInterest.toFixed(2)}</p>
+              <p style="color:#9333ea;font-weight:700;font-size:1.125rem;margin:0;">₦${formatMoney(monthlyInterest.toFixed(2))}</p>
             </div>
             <div class="card" style="padding:1rem;text-align:center;">
               <p style="color:#4b5563;font-size:0.875rem;margin:0 0 0.5rem;">Yearly</p>
-              <p style="color:#9333ea;font-weight:700;font-size:1.125rem;margin:0;">₦${yearlyInterest.toFixed(2)}</p>
+              <p style="color:#9333ea;font-weight:700;font-size:1.125rem;margin:0;">₦${formatMoney(yearlyInterest.toFixed(2))}</p>
             </div>
           </div>
         </div>
@@ -284,7 +284,7 @@ function renderSafeboxWithdrawPage(container) {
           <label style="display:block;color:#111827;font-size:0.9375rem;margin-bottom:0.5rem;">Amount(₦)</label>
           <input id="sbw-amount" type="text" readonly class="input" style="font-size:1.0625rem;padding:1rem;background:#f5f6f8;border:none;" placeholder="₦" value="${amount}" />
         </div>
-        <p style="color:#9ca3af;font-size:0.875rem;margin:0.5rem 0 1.5rem;">Current SafeBox balance ₦${safeboxBalance.toFixed(2)}</p>
+        <p style="color:#9ca3af;font-size:0.875rem;margin:0.5rem 0 1.5rem;">Current SafeBox balance ₦${formatMoney(safeboxBalance.toFixed(2))}</p>
 
         <div class="flex items-center justify-between" style="margin-bottom:0.25rem;">
           <span style="color:#111827;font-size:0.9375rem;">Breaking fee(₦)</span>

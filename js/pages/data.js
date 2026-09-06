@@ -199,7 +199,7 @@ function renderDataPage(container) {
         <div class="flex items-center" style="gap:0.625rem;">
           <span style="color:${primaryColor};">${Icon("banknote", { size: 24 })}</span>
           <span style="font-weight:700;font-size:0.9375rem;">Cashback</span>
-          <span style="background:${primaryColor}17;color:${primaryColor};font-size:0.75rem;font-weight:700;padding:2px 10px;border-radius:9999px;">₦${totalCashback.toFixed(2)}</span>
+          <span style="background:${primaryColor}17;color:${primaryColor};font-size:0.75rem;font-weight:700;padding:2px 10px;border-radius:9999px;">₦${formatMoney(totalCashback.toFixed(2))}</span>
         </div>
         <button id="cashback-more" style="background:none;border:none;color:#9ca3af;font-size:0.8125rem;display:flex;align-items:center;">More ${Icon("chevron-right", { size: 14 })}</button>
       </div>
@@ -248,7 +248,7 @@ function renderDataPage(container) {
               <div style="font-size:0.75rem;color:#6b7280;margin:1px 0 6px;">${p.validity}</div>
               <div style="font-size:0.9375rem;font-weight:700;color:#111827;">₦${p.price.toLocaleString()}</div>
               <div style="font-size:0.75rem;color:#9ca3af;text-decoration:line-through;">₦${originalPrice.toLocaleString()}.00</div>
-              <div style="font-size:0.75rem;color:#16a34a;font-weight:600;margin-top:2px;">₦${cashbackAmt} Cashback</div>
+              <div style="font-size:0.75rem;color:#16a34a;font-weight:600;margin-top:2px;">₦${formatMoney(cashbackAmt)} Cashback</div>
               ${p.description ? `<div style="margin-top:6px;background:#fef3c7;color:#92400e;font-size:0.625rem;font-weight:600;padding:2px 6px;border-radius:4px;display:inline-block;">${p.description}</div>` : ""}
             </button>`;
             })
@@ -342,8 +342,8 @@ function renderDataPage(container) {
         { label: "Phone Number", value: phoneNumber },
         { label: "Data Plan", value: plan.size },
         { label: "Price", value: `₦${plan.price.toLocaleString()}` },
-        ...(cashbackToUse > 0 ? [{ label: "Cashback to Use", value: `₦${cashbackToUse.toFixed(2)}` }] : []),
-        { label: "From Balance", value: `₦${remainingAmount.toFixed(2)}` },
+        ...(cashbackToUse > 0 ? [{ label: "Cashback to Use", value: `₦${formatMoney(cashbackToUse.toFixed(2))}` }] : []),
+        { label: "From Balance", value: `₦${formatMoney(remainingAmount.toFixed(2))}` },
       ],
       onConfirm: () => {
         showPinModal({
@@ -365,7 +365,7 @@ function renderDataPage(container) {
         
         showTransactionReceipt({
           title: selectedNetwork.toUpperCase(),
-          amount: `-₦${plan.price}`,
+          amount: `-₦${formatMoney(plan.price)}`,
           success: true,
           date: new Date().toLocaleString(),
           details: [
@@ -374,16 +374,16 @@ function renderDataPage(container) {
             { label: "Data Plan", value: plan.size },
             { label: "Transaction No.", value: transId },
             { label: "Payment Method", value: "OWealth" },
-            { label: "Cashback Earned", value: `+₦${cashbackEarned.toFixed(2)}` },
+            { label: "Cashback Earned", value: `+₦${formatMoney(cashbackEarned.toFixed(2))}` },
           ],
           variant: "badge",
           footerText: "Enjoy a better life with OPay. Get free transfers, withdrawals, bill payments, instant loans, and good annual interest on your savings. OPay is licensed by the Central Bank of Nigeria and insured by the NDIC.",
           onClose: () => navigate("/dashboard")
         });
         
-        Stores.transaction.addTransaction({ type: "Data Cashback", amount: `+₦${cashbackEarned.toFixed(2)}`, status: "Successful", icon: "wifi" });
+        Stores.transaction.addTransaction({ type: "Data Cashback", amount: `+₦${formatMoney(cashbackEarned.toFixed(2))}`, status: "Successful", icon: "wifi" });
         if (cashbackToUse > 0) {
-          Stores.transaction.addTransaction({ type: "Cashback Used", amount: `-₦${cashbackToUse.toFixed(2)}`, status: "Successful", icon: "gift" });
+          Stores.transaction.addTransaction({ type: "Cashback Used", amount: `-₦${formatMoney(cashbackToUse.toFixed(2))}`, status: "Successful", icon: "gift" });
         }
         },
         });

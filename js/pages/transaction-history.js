@@ -140,8 +140,8 @@ function renderTransactionHistoryPage(container) {
                     ${formatMonthLabel(group.date)} ${Icon("chevron-down", { size: 16, class: "" })}
                   </div>
                   <div class="flex items-center" style="gap:0.75rem;margin-top:4px;font-size:0.75rem;color:#6b7280;">
-                    <span>In: <span style="color:#374151;">₦${group.in.toFixed(2)}</span></span>
-                    <span>Out: <span style="color:#374151;">₦${group.out.toFixed(2)}</span></span>
+                    <span>In: <span style="color:#374151;">₦${formatMoney(group.in.toFixed(2))}</span></span>
+                    <span>Out: <span style="color:#374151;">₦${formatMoney(group.out.toFixed(2))}</span></span>
                   </div>
                 </div>
                 <button style="color:white;font-size:0.75rem;font-weight:500;padding:0.375rem 1rem;border-radius:9999px;border:none;background:${primaryColor};">Analysis</button>

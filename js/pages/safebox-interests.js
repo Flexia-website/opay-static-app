@@ -25,7 +25,7 @@ function renderSafeboxInterestsPage(container) {
       <div style="background:#e2f6e9;border-radius:1rem;padding:1.25rem;text-align:center;position:relative;margin-bottom:1.5rem;">
         <button id="sbi-prev-month" style="position:absolute;left:1.25rem;top:50%;transform:translateY(-50%);background:none;border:none;color:#374151;">${Icon("chevron-left", { size: 20 })}</button>
         <div style="color:#111827;font-size:0.9375rem;margin-bottom:0.375rem;">Interest on August 2026</div>
-        <div style="font-size:1.75rem;font-weight:800;color:#0aab63;">₦${monthTotal.toFixed(2)}</div>
+        <div style="font-size:1.75rem;font-weight:800;color:#0aab63;">₦${formatMoney(monthTotal.toFixed(2))}</div>
       </div>
 
       ${dailyBreakdown
@@ -40,8 +40,8 @@ function renderSafeboxInterestsPage(container) {
               : `<span style="color:#9ca3af;margin-top:2px;">${Icon("calendar", { size: 18 })}</span>`
           }
           <div>
-            <div style="font-size:1.0625rem;font-weight:700;color:${d.credited ? "#0aab63" : "#9ca3af"};">Interest:₦${d.interest.toFixed(2)}</div>
-            <div style="font-size:0.9375rem;color:#111827;margin-top:2px;">Balance at ${d.date}：₦${d.balance.toFixed(2)}</div>
+            <div style="font-size:1.0625rem;font-weight:700;color:${d.credited ? "#0aab63" : "#9ca3af"};">Interest:₦${formatMoney(d.interest.toFixed(2))}</div>
+            <div style="font-size:0.9375rem;color:#111827;margin-top:2px;">Balance at ${d.date}：₦${formatMoney(d.balance.toFixed(2))}</div>
           </div>
         </div>`
         )

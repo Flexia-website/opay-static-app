@@ -90,7 +90,7 @@ function renderAirtimePage(container) {
         <div class="flex items-center" style="gap:0.625rem;">
           <span style="color:${primaryColor};">${Icon("banknote", { size: 24 })}</span>
           <span style="font-weight:700;font-size:0.9375rem;">Cashback</span>
-          <span style="background:${primaryColor}17;color:${primaryColor};font-size:0.75rem;font-weight:700;padding:2px 10px;border-radius:9999px;">₦${totalCashback.toFixed(2)}</span>
+          <span style="background:${primaryColor}17;color:${primaryColor};font-size:0.75rem;font-weight:700;padding:2px 10px;border-radius:9999px;">₦${formatMoney(totalCashback.toFixed(2))}</span>
         </div>
       </div>
       ${
@@ -114,8 +114,8 @@ function renderAirtimePage(container) {
             <button data-amount="${item.amount}" style="padding:0.75rem 0.5rem;border-radius:0.875rem;border:${
                 isSelected ? `1.5px solid ${primaryColor}` : "1.5px solid transparent"
               };background:${isSelected ? primaryColor + "12" : "#f5f6f8"};text-align:left;">
-                <div style="font-size:1rem;font-weight:800;color:#111827;">₦${item.amount}</div>
-                <div style="font-size:0.75rem;color:#16a34a;font-weight:600;margin-top:2px;">₦${item.cashback} Cashback</div>
+                <div style="font-size:1rem;font-weight:800;color:#111827;">₦${formatMoney(item.amount)}</div>
+                <div style="font-size:0.75rem;color:#16a34a;font-weight:600;margin-top:2px;">₦${formatMoney(item.cashback)} Cashback</div>
               </button>`;
             })
             .join("")}
@@ -238,9 +238,9 @@ function renderAirtimePage(container) {
       details: [
         { label: "Network", value: window.NETWORKS.find((n) => n.id === selectedNetwork)?.name || "" },
         { label: "Phone Number", value: phoneNumber },
-        { label: "Amount", value: `₦${amount}` },
-        ...(cashbackToUse > 0 ? [{ label: "Cashback to Use", value: `₦${cashbackToUse.toFixed(2)}` }] : []),
-        { label: "From Balance", value: `₦${remainingAmount.toFixed(2)}` },
+        { label: "Amount", value: `₦${formatMoney(amount)}` },
+        ...(cashbackToUse > 0 ? [{ label: "Cashback to Use", value: `₦${formatMoney(cashbackToUse.toFixed(2))}` }] : []),
+        { label: "From Balance", value: `₦${formatMoney(remainingAmount.toFixed(2))}` },
       ],
       onConfirm: () => {
         showPinModal({
@@ -256,17 +256,17 @@ function renderAirtimePage(container) {
             const now = new Date();
             const formattedDate = `${now.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })} ${now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false })}`;
 
-            Stores.transaction.addTransaction({ type: "Airtime Purchase", amount: `-₦${amount}`, status: "Successful", icon: "phone" });
-            Stores.transaction.addTransaction({ type: "Cashback from Airtime", amount: `+₦${cashbackEarned.toFixed(2)}`, status: "Successful", icon: "gift" });
+            Stores.transaction.addTransaction({ type: "Airtime Purchase", amount: `-₦${formatMoney(amount)}`, status: "Successful", icon: "phone" });
+            Stores.transaction.addTransaction({ type: "Cashback from Airtime", amount: `+₦${formatMoney(cashbackEarned.toFixed(2))}`, status: "Successful", icon: "gift" });
             if (cashbackToUse > 0) {
-              Stores.transaction.addTransaction({ type: "Cashback Used", amount: `-₦${cashbackToUse.toFixed(2)}`, status: "Successful", icon: "gift" });
+              Stores.transaction.addTransaction({ type: "Cashback Used", amount: `-₦${formatMoney(cashbackToUse.toFixed(2))}`, status: "Successful", icon: "gift" });
             }
 
-            toast.success(`Airtime purchase successful! Earned ₦${cashbackEarned.toFixed(2)} cashback.`);
+            toast.success(`Airtime purchase successful! Earned ₦${formatMoney(cashbackEarned.toFixed(2))} cashback.`);
 
             const networkName = window.NETWORKS.find((n) => n.id === selectedNetwork)?.name || "Airtime";
             showTransactionReceipt({
-              amount: `₦${amount}`,
+              amount: `₦${formatMoney(amount)}`,
               success: true,
               date: formattedDate,
               details: [
@@ -274,8 +274,8 @@ function renderAirtimePage(container) {
                 { label: "Transaction Type", value: "Airtime" },
                 { label: "Transaction No.", value: transId },
                 { label: "Payment Method", value: "OWealth" },
-                ...(cashbackToUse > 0 ? [{ label: "Cashback Used", value: `₦${cashbackToUse.toFixed(2)}` }] : []),
-                { label: "Cashback Earned", value: `+₦${cashbackEarned.toFixed(2)}` },
+                ...(cashbackToUse > 0 ? [{ label: "Cashback Used", value: `₦${formatMoney(cashbackToUse.toFixed(2))}` }] : []),
+                { label: "Cashback Earned", value: `+₦${formatMoney(cashbackEarned.toFixed(2))}` },
               ],
               title: networkName,
               footerText:

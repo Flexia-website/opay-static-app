@@ -146,13 +146,13 @@ function renderWithdrawPage(container) {
 
           Stores.transaction.addTransaction({
             type: `Withdrawal to ${selectedOption.name}`,
-            amount: `-₦${amount}`,
+            amount: `-₦${formatMoney(amount)}`,
             status: "Successful",
             icon: "arrow-up-right",
           });
 
           showTransactionReceipt({
-            amount: `₦${amount}`,
+            amount: `₦${formatMoney(amount)}`,
             success: true,
             date: formattedDate,
             details: [

@@ -44,7 +44,7 @@ function renderDashboard(container) {
 
   function renderBalanceCard() {
     return `
-    <div style="background:${primaryColor};margin:0.625rem 0.75rem 0;padding:1rem;border-radius:1.125rem;color:white;box-shadow:0 6px 20px -6px ${primaryColor}80;">
+    <div style="background:${primaryColor};margin:0.5rem 0.75rem 0;padding:0.875rem 1rem;border-radius:1.125rem;color:white;box-shadow:0 6px 20px -6px ${primaryColor}80;">
       <div class="flex justify-between items-center" style="margin-bottom:0.75rem;">
         <div class="flex items-center" style="gap:5px;">
           ${iconOrImage("shield-check", "balance-shield", 16)}
@@ -69,7 +69,7 @@ function renderDashboard(container) {
     const recent = transactions.slice(0, 2);
     if (recent.length === 0) return "";
     return `
-    <div style="background:white;margin:0.625rem 0.75rem 0;border-radius:1.125rem;padding:0.875rem 1rem;box-shadow:0 1px 2px rgb(0 0 0 / 0.04);">
+    <div style="background:white;margin:0.5rem 0.75rem 0;border-radius:1.125rem;padding:0.75rem 1rem;box-shadow:0 1px 2px rgb(0 0 0 / 0.04);">
       <div class="flex justify-between items-center" style="margin-bottom:0.5rem;">
         <h3 style="font-size:0.875rem;font-weight:600;margin:0;">Recent Transactions</h3>
         <button id="tx-view-all" style="font-size:0.75rem;color:${primaryColor};background:none;border:none;font-weight:600;">View All</button>
@@ -102,7 +102,7 @@ function renderDashboard(container) {
   function fullHtml() {
     return `
     <div class="pb-nav-safe" style="min-height:100vh;background:#f5f6f8;">
-      <header class="app-header flex items-center justify-between" style="padding:0.75rem 1rem;background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;border-bottom:none;box-shadow:none;">
+      <header class="app-header flex items-center justify-between" style="padding:0.625rem 1rem;background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;border-bottom:none;box-shadow:none;">
         <div class="flex items-center" style="gap:0.5rem;">
           <button id="profile-btn" style="width:${2.25 * (profilePhotoSize || 1)}rem;height:${2.25 * (profilePhotoSize || 1)}rem;border-radius:9999px;background:transparent;display:flex;align-items:center;justify-content:center;border:none;flex-shrink:0;">
             ${
@@ -129,12 +129,12 @@ function renderDashboard(container) {
       <div id="balance-card-wrap">${renderBalanceCard()}</div>
       <div id="tx-card-wrap">${renderTransactionsCard()}</div>
 
-      <div style="background:white;margin:0.625rem 0.75rem 0;padding:1.125rem 0.5rem;border-radius:1.125rem;box-shadow:0 1px 2px rgb(0 0 0 / 0.04);">
+      <div style="background:white;margin:0.5rem 0.75rem 0;padding:0.875rem 0.5rem;border-radius:1.125rem;box-shadow:0 1px 2px rgb(0 0 0 / 0.04);">
         <div class="grid" style="grid-template-columns:repeat(3,1fr);">
           ${quickActions
             .map(
               (a) => `
-            <button data-nav="${a.path}" style="display:flex;flex-direction:column;align-items:center;gap:0.5rem;padding:0.375rem;background:none;border:none;">
+            <button data-nav="${a.path}" style="display:flex;flex-direction:column;align-items:center;gap:0.375rem;padding:0.25rem;background:none;border:none;">
               <div style="width:2.75rem;height:2.75rem;border-radius:9999px;display:flex;align-items:center;justify-content:center;background:${primaryColor}17;">
                 ${iconOrImage(a.icon, a.key, 22)}
               </div>
@@ -145,12 +145,22 @@ function renderDashboard(container) {
         </div>
       </div>
 
-      <div style="background:white;margin:0.625rem 0.75rem 0;padding:1.125rem 0.5rem;border-radius:1.125rem;box-shadow:0 1px 2px rgb(0 0 0 / 0.04);">
-        <div class="grid" style="grid-template-columns:repeat(4,1fr);row-gap:1.125rem;">
+      <div style="margin:0.5rem 0.75rem 0;background:white;padding:0.75rem 1rem;border-radius:1.125rem;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 2px rgb(0 0 0 / 0.04);">
+        <div class="flex items-center" style="gap:0.625rem;">
+          <div style="color:${primaryColor};">${iconOrImage("mail", "stay-informed", 24)}</div>
+          <div>
+            <h3 style="font-weight:700;font-size:0.8125rem;margin:0;">Take Control, Stay Informed</h3>
+            <p style="font-size:0.7rem;color:#6b7280;margin:1px 0 0;">Add your email, get the latest from OPay</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:white;margin:0.5rem 0.75rem 0;padding:0.875rem 0.5rem;border-radius:1.125rem;box-shadow:0 1px 2px rgb(0 0 0 / 0.04);">
+        <div class="grid" style="grid-template-columns:repeat(4,1fr);row-gap:0.875rem;">
           ${services
             .map(
               (s) => `
-            <button data-nav="${s.path}" style="display:flex;flex-direction:column;align-items:center;gap:0.5rem;position:relative;padding:0.25rem;background:none;border:none;">
+            <button data-nav="${s.path}" style="display:flex;flex-direction:column;align-items:center;gap:0.375rem;position:relative;padding:0.25rem;background:none;border:none;">
               <div style="position:relative;">
                 <div style="width:3rem;height:3rem;border-radius:9999px;display:flex;align-items:center;justify-content:center;background:${primaryColor}17;">
                   ${iconOrImage(s.icon, s.key, 24)}
@@ -166,45 +176,6 @@ function renderDashboard(container) {
             )
             .join("")}
         </div>
-      </div>
-
-      <div style="margin:0.625rem 0.75rem 0;background:white;padding:0.875rem 1rem;border-radius:1.125rem;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 2px rgb(0 0 0 / 0.04);">
-        <div class="flex items-center" style="gap:0.625rem;">
-          <div style="color:${primaryColor};">${iconOrImage("mail", "stay-informed", 26)}</div>
-          <div>
-            <h3 style="font-weight:700;font-size:0.875rem;margin:0;">Take Control, Stay Informed</h3>
-            <p style="font-size:0.75rem;color:#6b7280;margin:2px 0 0;">Add your email, get the latest from OPay</p>
-          </div>
-        </div>
-      </div>
-
-      <div style="margin:0.75rem 0.75rem 0;background:linear-gradient(135deg,#eaf9ef,#f7fbe9);border-radius:1.125rem;padding:1rem;">
-        <div class="flex items-center justify-between" style="margin-bottom:0.625rem;">
-          <h3 style="font-weight:800;font-size:1.0625rem;margin:0;color:#111827;">Start Fixed Saving with OPay</h3>
-          <span style="color:#111827;display:flex;">${Icon("gift", { size: 20 })}</span>
-        </div>
-        <div style="border-top:1px dashed #d1d5db;margin-bottom:0.75rem;"></div>
-        <div class="flex items-center justify-between">
-          <div class="flex items-center" style="gap:0.75rem;">
-            <div style="color:#16a34a;">${Icon("banknote", { size: 28 })}</div>
-            <div>
-              <p style="font-weight:700;font-size:0.9375rem;margin:0;">Special Fixed</p>
-              <p style="font-size:0.75rem;color:#6b7280;margin:2px 0 0;">Start from ₦1,000 and enjoy <span style="color:#16a34a;font-weight:700;">22% p.a.</span> returns!</p>
-            </div>
-          </div>
-          <button data-nav="/safebox" style="background:${primaryColor};color:white;padding:0.5rem 1.25rem;border-radius:9999px;font-size:0.875rem;font-weight:700;border:none;white-space:nowrap;">Save</button>
-        </div>
-      </div>
-
-      <div style="margin:0.75rem 0.75rem 0;background:white;border-radius:1.125rem;padding:0.875rem 1rem;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 2px rgb(0 0 0 / 0.04);">
-        <div class="flex items-center" style="gap:0.75rem;">
-          <div style="width:2.75rem;height:2.75rem;border-radius:9999px;background:#e0e7ff;display:flex;align-items:center;justify-content:center;color:#4f46e5;">${Icon("hand-heart", { size: 22 })}</div>
-          <div>
-            <h3 style="font-weight:700;font-size:0.9375rem;margin:0;">Share OPay with Others</h3>
-            <p style="font-size:0.75rem;color:#6b7280;margin:2px 0 0;">Help a loved one get their own account in minutes</p>
-          </div>
-        </div>
-        <button data-nav="/invitation" style="background:${primaryColor};color:white;padding:0.5rem 1.1rem;border-radius:9999px;font-size:0.875rem;font-weight:700;border:none;">Go</button>
       </div>
 
       ${BottomNav("home")}

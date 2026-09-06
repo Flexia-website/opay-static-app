@@ -180,7 +180,7 @@ function renderToOpayPage(container) {
               ${(name || recipient).charAt(0).toUpperCase()}
             </div>
             <p style="font-size:0.9375rem;color:#111827;margin:0 0 0.75rem;font-weight:600;">${name || recipient}</p>
-            <div style="font-size:1.875rem;font-weight:800;color:#111827;margin-bottom:0.5rem;letter-spacing:-0.01em;">₦${typeof amt === 'string' ? amt : amt}</div>
+            <div style="font-size:1.875rem;font-weight:800;color:#111827;margin-bottom:0.5rem;letter-spacing:-0.01em;">₦${formatMoney(amt)}</div>
             <p style="font-size:0.75rem;color:#6b7280;margin:0;">OPay Transfer</p>
           </div>
         </div>
@@ -193,7 +193,7 @@ function renderToOpayPage(container) {
           </div>
           <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:0.875rem 0;">
             <div style="color:#6b7280;font-size:0.8125rem;font-weight:500;">Amount</div>
-            <div style="text-align:right;font-weight:700;font-size:0.875rem;color:#111827;">₦${typeof amt === 'string' ? amt : amt}</div>
+            <div style="text-align:right;font-weight:700;font-size:0.875rem;color:#111827;">₦${formatMoney(amt)}</div>
           </div>
         </div>
 
@@ -232,14 +232,14 @@ function renderToOpayPage(container) {
     const sessionId = 'sess_' + Math.random().toString(36).substr(2, 9).toUpperCase();
     Stores.transaction.addTransaction({
       type: `Transfer to ${name || recipient}`,
-      amount: `-₦${amt}`,
+      amount: `-₦${formatMoney(amt)}`,
       status: 'Successful',
       icon: 'send'
     });
     Stores.balance.set(s => ({ balance: s.balance - parseFloat(amt) }));
     showTransactionReceipt({
       title: `Transfer to ${name || recipient}`,
-      amount: `-₦${amt}`,
+      amount: `-₦${formatMoney(amt)}`,
       success: true,
       date: new Date().toLocaleString(),
       details: [

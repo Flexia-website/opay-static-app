@@ -119,7 +119,7 @@ function renderLoanPage(container) {
 
   function handleApply() {
     if (loanAmount < minLoan || loanAmount > maxLoan) {
-      alert(`Loan amount must be between ₦${minLoan} and ₦${maxLoan}`);
+      alert(`Loan amount must be between ₦${formatMoney(minLoan)} and ₦${formatMoney(maxLoan)}`);
       return;
     }
     const repayment = totalRepayment();

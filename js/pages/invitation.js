@@ -103,7 +103,7 @@ function renderInvitationPage(container) {
 
     <div style="background:white;border-radius:1.25rem;margin:0.75rem;padding:1.125rem 1rem;">
       <div style="display:flex;align-items:center;gap:0.5rem;font-size:1.0625rem;font-weight:700;color:#111827;">
-        <span>🪙</span> Total Earned: ₦${totalEarned}
+        <span>🪙</span> Total Earned: ₦${formatMoney(totalEarned)}
       </div>
     </div>
 

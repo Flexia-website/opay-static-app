@@ -188,7 +188,7 @@ function renderToBankPage(container) {
               ${bankLogo ? `<img src="${bankLogo}" loading="eager" decoding="async" referrerpolicy="no-referrer" style="width:100%;height:100%;object-fit:contain;padding:0.25rem;" onerror="handleBankLogoError(this)" />` : `<span style="color:#111827;">${Icon('building-2', {size: 22})}</span>`}
             </div>
             <p style="font-size:0.9375rem;color:#111827;margin:0 0 0.75rem;font-weight:600;">${name}</p>
-            <div style="font-size:1.875rem;font-weight:800;color:#111827;margin-bottom:0.5rem;letter-spacing:-0.01em;">₦${typeof amt === 'string' ? amt : amt}</div>
+            <div style="font-size:1.875rem;font-weight:800;color:#111827;margin-bottom:0.5rem;letter-spacing:-0.01em;">₦${formatMoney(amt)}</div>
             <p style="font-size:0.75rem;color:#6b7280;margin:0;">To ${bank}</p>
           </div>
         </div>
@@ -209,7 +209,7 @@ function renderToBankPage(container) {
           </div>
           <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:0.875rem 0;">
             <div style="color:#6b7280;font-size:0.8125rem;font-weight:500;">Amount</div>
-            <div style="text-align:right;font-weight:700;font-size:0.875rem;color:#111827;">₦${typeof amt === 'string' ? amt : amt}</div>
+            <div style="text-align:right;font-weight:700;font-size:0.875rem;color:#111827;">₦${formatMoney(amt)}</div>
           </div>
         </div>
 
@@ -251,14 +251,14 @@ function renderToBankPage(container) {
     
     Stores.transaction.addTransaction({
       type: `Transfer to ${name}`,
-      amount: `-₦${amt}`,
+      amount: `-₦${formatMoney(amt)}`,
       status: 'Successful',
       icon: 'building-2'
     });
     Stores.balance.set(s => ({ balance: s.balance - parseFloat(amt) }));
     showTransactionReceipt({
       title: `${bank}`,
-      amount: `-₦${amt}`,
+      amount: `-₦${formatMoney(amt)}`,
       success: true,
       date: new Date().toLocaleString(),
       details: [
