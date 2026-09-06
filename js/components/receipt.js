@@ -63,10 +63,13 @@ async function captureAndShareReceipt(elementId, filename = 'receipt') {
     
     const canvas = await html2canvas(element, {
       backgroundColor: '#ffffff',
-      scale: 2,
+      scale: 3,
       logging: false,
       useCORS: true,
-      allowTaint: true
+      allowTaint: true,
+      imageTimeout: 0,
+      windowHeight: element.scrollHeight,
+      windowWidth: element.scrollWidth
     });
     
     canvas.toBlob(async (blob) => {
@@ -162,8 +165,8 @@ function showTransactionReceipt({ amount, success = true, date, details = [], on
     : (BANK_LOGOS[bankName] || recipientIcon || BANK_LOGOS["First Bank"]);
 
   const logoBadge = `
-    <div style="position:absolute;top:0;left:50%;transform:translate(-50%,-50%);width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;background-color:white;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.15);border:2px solid white;">
-      ${recipientIcon ? `<img src="${recipientIcon}" style="width:90%;height:90%;object-fit:contain;" onerror="this.style.display='none';" />` : `<img src="${logoBadgeSrc}" style="width:100%;height:100%;object-fit:contain;" onerror="this.style.display='none';" />`}
+    <div style="position:absolute;top:0;left:50%;transform:translate(-50%,-50%);width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;background-color:white;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.15);border:2px solid white;flex-shrink:0;">
+      ${recipientIcon ? `<img src="${recipientIcon}" style="width:50px;height:50px;object-fit:cover;border-radius:50%;" onerror="this.style.display='none';" />` : `<img src="${logoBadgeSrc}" style="width:50px;height:50px;object-fit:cover;border-radius:50%;" onerror="this.style.display='none';" />`}
     </div>`;
 
   // ---------------------------------------------------------------------
