@@ -1,8 +1,6 @@
 function renderCustomizationPage(container) {
   let activeTab = "color";
   let iconSearch = "";
-  let folderImages = JSON.parse(localStorage.getItem("folderImages") || "[]");
-  let selectedFolderName = localStorage.getItem("selectedFolderName") || "No folder selected";
   
   const colorOptions = [
     { color: "#34C759", name: "Green" },
@@ -15,68 +13,68 @@ function renderCustomizationPage(container) {
     { color: "#FFCC00", name: "Yellow" },
   ];
   const buttonTypes = [
-    { key: "profile", label: "Profile Photo", description: "Your profile image in the top left corner", section: "Profile" },
-    { key: "app-logo", label: "App Logo", description: "Your logo shown on the launch splash screen and app branding", section: "Profile" },
-    { key: "help", label: "Help Button", description: "Help button in the top right corner", section: "Header Buttons" },
-    { key: "qrcode", label: "QR Code Button", description: "QR code button in the top right corner", section: "Header Buttons" },
-    { key: "notifications", label: "Notifications Button", description: "Notifications bell icon in the top right corner", section: "Header Buttons" },
-    { key: "toopay", label: "To OPay", description: "OPay transfer quick action button", section: "Quick Actions" },
-    { key: "tobank", label: "To Bank", description: "Bank transfer quick action button", section: "Quick Actions" },
-    { key: "withdraw", label: "Withdraw", description: "Withdraw funds quick action button", section: "Quick Actions" },
-    { key: "airtime", label: "Airtime", description: "Airtime service button", section: "Main Services" },
-    { key: "data", label: "Data", description: "Data service button", section: "Main Services" },
-    { key: "betting", label: "Betting", description: "Betting service button", section: "Main Services" },
-    { key: "tv", label: "TV", description: "TV subscription service button", section: "Main Services" },
-    { key: "safebox", label: "Safebox", description: "Safebox service button", section: "Main Services" },
-    { key: "loan", label: "Loan", description: "Loan service button", section: "Main Services" },
-    { key: "invitation", label: "Invitation", description: "Invitation/referral banner icon on the dashboard", section: "Main Services" },
-    { key: "more", label: "More", description: "More button in the bottom-right quick actions row", section: "Main Services" },
-    { key: "friday-bonus", label: "Friday Bonus", description: "Friday Bonus icon on the Rewards page", section: "Rewards Page" },
-    { key: "refer-friends", label: "Refer Friends", description: "Refer Friends icon on the Rewards page", section: "Rewards Page" },
-    { key: "play4achild", label: "Play4aChild", description: "Play4aChild icon on the Rewards page", section: "Rewards Page" },
-    { key: "voucher-pack", label: "Voucher Pack", description: "Voucher Pack icon on the Rewards page", section: "Rewards Page" },
-    { key: "daily-bonus-1", label: "Daily Bonus Icon 1", description: "Cash icon for the first Daily Bonus row", section: "Rewards Page" },
-    { key: "daily-bonus-2", label: "Daily Bonus Icon 2", description: "Cash icon for the second Daily Bonus row", section: "Rewards Page" },
-    { key: "daily-bonus-3", label: "Daily Bonus Icon 3", description: "Cash icon for the third Daily Bonus row", section: "Rewards Page" },
-    { key: "inv-share", label: "Share Step Icon", description: "\"Share invitation link/code\" step icon on the Invitation page", section: "Invitation Page" },
-    { key: "inv-check", label: "Transacts Step Icon", description: "\"Friend transacts\" step icon on the Invitation page", section: "Invitation Page" },
-    { key: "inv-banknote", label: "Reward Step Icon", description: "\"Receive rewards\" step icon on the Invitation page", section: "Invitation Page" },
-    { key: "svc-aliexpress", label: "AliExpress", description: "AliExpress tile on the All Service page", section: "All Service — E-commerce" },
-    { key: "svc-gift-cards", label: "Gift Cards", description: "Gift Cards tile on the All Service page", section: "All Service — E-commerce" },
-    { key: "svc-chowdeck", label: "Chowdeck", description: "Chowdeck tile on the All Service page", section: "All Service — E-commerce" },
-    { key: "svc-remit", label: "Remit", description: "Remit tile on the All Service page", section: "All Service — International" },
-    { key: "svc-electricity", label: "Electricity", description: "Electricity tile on the All Service page", section: "All Service — Bills Payment" },
-    { key: "svc-solar", label: "Solar", description: "Solar tile on the All Service page", section: "All Service — Bills Payment" },
-    { key: "svc-products-services", label: "Products and Services", description: "Products and Services tile on the All Service page", section: "All Service — Bills Payment" },
-    { key: "svc-school-exam", label: "School & Exam", description: "School & Exam tile on the All Service page", section: "All Service — Bills Payment" },
-    { key: "svc-internet-services", label: "Internet Services", description: "Internet Services tile on the All Service page", section: "All Service — Bills Payment" },
-    { key: "svc-financial-services", label: "Financial Services", description: "Financial Services tile on the All Service page", section: "All Service — Bills Payment" },
-    { key: "svc-invoice-payments", label: "Invoice Payments", description: "Invoice Payments tile on the All Service page", section: "All Service — Bills Payment" },
-    { key: "svc-aid-grants", label: "Aid Grants and Donations", description: "Aid Grants and Donations tile on the All Service page", section: "All Service — Bills Payment" },
-    { key: "svc-religious", label: "Religious", description: "Religious tile on the All Service page", section: "All Service — Bills Payment" },
-    { key: "svc-government-payments", label: "Government Payments", description: "Government Payments tile on the All Service page", section: "All Service — Bills Payment" },
-    { key: "svc-embassies", label: "Embassies", description: "Embassies tile on the All Service page", section: "All Service — Bills Payment" },
-    { key: "svc-tv-others", label: "TV(Others)", description: "TV(Others) tile on the All Service page", section: "All Service — Bills Payment" },
-    { key: "svc-shopping", label: "Shopping", description: "Shopping tile on the All Service page", section: "All Service — Bills Payment" },
-    { key: "svc-online-shopping", label: "Online Shopping", description: "Online Shopping tile on the All Service page", section: "All Service — Bills Payment" },
-    { key: "svc-merchant-payments", label: "Merchant Payments", description: "Merchant Payments tile on the All Service page", section: "All Service — Bills Payment" },
-    { key: "svc-blackberry", label: "Blackberry", description: "Blackberry tile on the All Service page", section: "All Service — Bills Payment" },
-    { key: "svc-paychoice", label: "PayChoice", description: "PayChoice tile on the All Service page", section: "All Service — Bills Payment" },
-    { key: "svc-commerce-retail", label: "Commerce Retail Trade", description: "Commerce Retail Trade tile on the All Service page", section: "All Service — Bills Payment" },
-    { key: "svc-prepaid-card", label: "Prepaid Card Services", description: "Prepaid Card Services tile on the All Service page", section: "All Service — Bills Payment" },
-    { key: "svc-international-airtime", label: "International Airtime", description: "International Airtime tile on the All Service page", section: "All Service — Bills Payment" },
-    { key: "svc-transport-toll", label: "Transport & Toll", description: "Transport & Toll tile on the All Service page", section: "All Service — Bills Payment" },
-    { key: "svc-travel-hotel", label: "Travel & Hotel", description: "Travel & Hotel tile on the All Service page", section: "All Service — Bills Payment" },
-    { key: "svc-owealth", label: "OWealth", description: "OWealth tile on the All Service page", section: "All Service — Finance" },
-    { key: "svc-fixed", label: "Fixed", description: "Fixed tile on the All Service page", section: "All Service — Finance" },
-    { key: "svc-safebox", label: "SafeBox", description: "SafeBox tile on the All Service page", section: "All Service — Finance" },
-    { key: "svc-targets", label: "Targets", description: "Targets tile on the All Service page", section: "All Service — Finance" },
-    { key: "svc-spend-save", label: "Spend & Save", description: "Spend & Save tile on the All Service page", section: "All Service — Finance" },
-    { key: "svc-daily-checkin", label: "Daily Check-In", description: "Daily Check-In tile on the All Service page", section: "All Service — Rewards" },
-    { key: "svc-play4achild", label: "Play4aChild", description: "Play4aChild tile on the All Service page", section: "All Service — Rewards" },
-    { key: "svc-refer-earn", label: "Refer & Earn", description: "Refer & Earn tile on the All Service page", section: "All Service — Rewards" },
-    { key: "svc-physical-card", label: "Physical Card", description: "Physical Card tile on the All Service page", section: "All Service — Others" },
-    { key: "svc-virtual-card", label: "Virtual Card", description: "Virtual Card tile on the All Service page", section: "All Service — Others" },
+    { key: "profile", label: "Profile Photo", description: "Your profile image in the top left corner", section: "Profile", defaultIcon: "user" },
+    { key: "app-logo", label: "App Logo", description: "Your logo shown on the launch splash screen and app branding", section: "Profile", defaultIcon: "image" },
+    { key: "help", label: "Help Button", description: "Help button in the top right corner", section: "Header Buttons", defaultIcon: "headphones" },
+    { key: "qrcode", label: "QR Code Button", description: "QR code button in the top right corner", section: "Header Buttons", defaultIcon: "qr-code" },
+    { key: "notifications", label: "Notifications Button", description: "Notifications bell icon in the top right corner", section: "Header Buttons", defaultIcon: "bell" },
+    { key: "toopay", label: "To OPay", description: "OPay transfer quick action button", section: "Quick Actions", defaultIcon: "send" },
+    { key: "tobank", label: "To Bank", description: "Bank transfer quick action button", section: "Quick Actions", defaultIcon: "building-2" },
+    { key: "withdraw", label: "Withdraw", description: "Withdraw funds quick action button", section: "Quick Actions", defaultIcon: "arrow-up-right" },
+    { key: "airtime", label: "Airtime", description: "Airtime service button", section: "Main Services", defaultIcon: "activity" },
+    { key: "data", label: "Data", description: "Data service button", section: "Main Services", defaultIcon: "smartphone" },
+    { key: "betting", label: "Betting", description: "Betting service button", section: "Main Services", defaultIcon: "circle" },
+    { key: "tv", label: "TV", description: "TV subscription service button", section: "Main Services", defaultIcon: "play" },
+    { key: "safebox", label: "Safebox", description: "Safebox service button", section: "Main Services", defaultIcon: "credit-card" },
+    { key: "loan", label: "Loan", description: "Loan service button", section: "Main Services", defaultIcon: "hand-heart" },
+    { key: "invitation", label: "Invitation", description: "Invitation/referral banner icon on the dashboard", section: "Main Services", defaultIcon: "megaphone" },
+    { key: "more", label: "More", description: "More button in the bottom-right quick actions row", section: "Main Services", defaultIcon: "more-horizontal" },
+    { key: "friday-bonus", label: "Friday Bonus", description: "Friday Bonus icon on the Rewards page", section: "Rewards Page", defaultIcon: "gift" },
+    { key: "refer-friends", label: "Refer Friends", description: "Refer Friends icon on the Rewards page", section: "Rewards Page", defaultIcon: "megaphone" },
+    { key: "play4achild", label: "Play4aChild", description: "Play4aChild icon on the Rewards page", section: "Rewards Page", defaultIcon: "heart" },
+    { key: "voucher-pack", label: "Voucher Pack", description: "Voucher Pack icon on the Rewards page", section: "Rewards Page", defaultIcon: "gift" },
+    { key: "daily-bonus-1", label: "Daily Bonus Icon 1", description: "Cash icon for the first Daily Bonus row", section: "Rewards Page", defaultIcon: "banknote" },
+    { key: "daily-bonus-2", label: "Daily Bonus Icon 2", description: "Cash icon for the second Daily Bonus row", section: "Rewards Page", defaultIcon: "banknote" },
+    { key: "daily-bonus-3", label: "Daily Bonus Icon 3", description: "Cash icon for the third Daily Bonus row", section: "Rewards Page", defaultIcon: "banknote" },
+    { key: "inv-share", label: "Share Step Icon", description: "\"Share invitation link/code\" step icon on the Invitation page", section: "Invitation Page", defaultIcon: "share" },
+    { key: "inv-check", label: "Transacts Step Icon", description: "\"Friend transacts\" step icon on the Invitation page", section: "Invitation Page", defaultIcon: "check-circle" },
+    { key: "inv-banknote", label: "Reward Step Icon", description: "\"Receive rewards\" step icon on the Invitation page", section: "Invitation Page", defaultIcon: "banknote" },
+    { key: "svc-aliexpress", label: "AliExpress", description: "AliExpress tile on the All Service page", section: "All Service — E-commerce", defaultIcon: "shopping-bag" },
+    { key: "svc-gift-cards", label: "Gift Cards", description: "Gift Cards tile on the All Service page", section: "All Service — E-commerce", defaultIcon: "gift" },
+    { key: "svc-chowdeck", label: "Chowdeck", description: "Chowdeck tile on the All Service page", section: "All Service — E-commerce", defaultIcon: "package" },
+    { key: "svc-remit", label: "Remit", description: "Remit tile on the All Service page", section: "All Service — International", defaultIcon: "send" },
+    { key: "svc-electricity", label: "Electricity", description: "Electricity tile on the All Service page", section: "All Service — Bills Payment", defaultIcon: "zap" },
+    { key: "svc-solar", label: "Solar", description: "Solar tile on the All Service page", section: "All Service — Bills Payment", defaultIcon: "sun" },
+    { key: "svc-products-services", label: "Products and Services", description: "Products and Services tile on the All Service page", section: "All Service — Bills Payment", defaultIcon: "briefcase" },
+    { key: "svc-school-exam", label: "School & Exam", description: "School & Exam tile on the All Service page", section: "All Service — Bills Payment", defaultIcon: "graduation-cap" },
+    { key: "svc-internet-services", label: "Internet Services", description: "Internet Services tile on the All Service page", section: "All Service — Bills Payment", defaultIcon: "wifi" },
+    { key: "svc-financial-services", label: "Financial Services", description: "Financial Services tile on the All Service page", section: "All Service — Bills Payment", defaultIcon: "banknote" },
+    { key: "svc-invoice-payments", label: "Invoice Payments", description: "Invoice Payments tile on the All Service page", section: "All Service — Bills Payment", defaultIcon: "file-text" },
+    { key: "svc-aid-grants", label: "Aid Grants and Donations", description: "Aid Grants and Donations tile on the All Service page", section: "All Service — Bills Payment", defaultIcon: "hand-heart" },
+    { key: "svc-religious", label: "Religious", description: "Religious tile on the All Service page", section: "All Service — Bills Payment", defaultIcon: "church" },
+    { key: "svc-government-payments", label: "Government Payments", description: "Government Payments tile on the All Service page", section: "All Service — Bills Payment", defaultIcon: "landmark" },
+    { key: "svc-embassies", label: "Embassies", description: "Embassies tile on the All Service page", section: "All Service — Bills Payment", defaultIcon: "flag" },
+    { key: "svc-tv-others", label: "TV(Others)", description: "TV(Others) tile on the All Service page", section: "All Service — Bills Payment", defaultIcon: "play" },
+    { key: "svc-shopping", label: "Shopping", description: "Shopping tile on the All Service page", section: "All Service — Bills Payment", defaultIcon: "shopping-bag" },
+    { key: "svc-online-shopping", label: "Online Shopping", description: "Online Shopping tile on the All Service page", section: "All Service — Bills Payment", defaultIcon: "shopping-bag" },
+    { key: "svc-merchant-payments", label: "Merchant Payments", description: "Merchant Payments tile on the All Service page", section: "All Service — Bills Payment", defaultIcon: "store" },
+    { key: "svc-blackberry", label: "Blackberry", description: "Blackberry tile on the All Service page", section: "All Service — Bills Payment", defaultIcon: "smartphone" },
+    { key: "svc-paychoice", label: "PayChoice", description: "PayChoice tile on the All Service page", section: "All Service — Bills Payment", defaultIcon: "credit-card" },
+    { key: "svc-commerce-retail", label: "Commerce Retail Trade", description: "Commerce Retail Trade tile on the All Service page", section: "All Service — Bills Payment", defaultIcon: "store" },
+    { key: "svc-prepaid-card", label: "Prepaid Card Services", description: "Prepaid Card Services tile on the All Service page", section: "All Service — Bills Payment", defaultIcon: "credit-card" },
+    { key: "svc-international-airtime", label: "International Airtime", description: "International Airtime tile on the All Service page", section: "All Service — Bills Payment", defaultIcon: "phone" },
+    { key: "svc-transport-toll", label: "Transport & Toll", description: "Transport & Toll tile on the All Service page", section: "All Service — Bills Payment", defaultIcon: "car" },
+    { key: "svc-travel-hotel", label: "Travel & Hotel", description: "Travel & Hotel tile on the All Service page", section: "All Service — Bills Payment", defaultIcon: "plane" },
+    { key: "svc-owealth", label: "OWealth", description: "OWealth tile on the All Service page", section: "All Service — Finance", defaultIcon: "coins" },
+    { key: "svc-fixed", label: "Fixed", description: "Fixed tile on the All Service page", section: "All Service — Finance", defaultIcon: "lock" },
+    { key: "svc-safebox", label: "SafeBox", description: "SafeBox tile on the All Service page", section: "All Service — Finance", defaultIcon: "credit-card" },
+    { key: "svc-targets", label: "Targets", description: "Targets tile on the All Service page", section: "All Service — Finance", defaultIcon: "gauge" },
+    { key: "svc-spend-save", label: "Spend & Save", description: "Spend & Save tile on the All Service page", section: "All Service — Finance", defaultIcon: "piggy-bank" },
+    { key: "svc-daily-checkin", label: "Daily Check-In", description: "Daily Check-In tile on the All Service page", section: "All Service — Rewards", defaultIcon: "calendar" },
+    { key: "svc-play4achild", label: "Play4aChild", description: "Play4aChild tile on the All Service page", section: "All Service — Rewards", defaultIcon: "heart" },
+    { key: "svc-refer-earn", label: "Refer & Earn", description: "Refer & Earn tile on the All Service page", section: "All Service — Rewards", defaultIcon: "megaphone" },
+    { key: "svc-physical-card", label: "Physical Card", description: "Physical Card tile on the All Service page", section: "All Service — Others", defaultIcon: "credit-card" },
+    { key: "svc-virtual-card", label: "Virtual Card", description: "Virtual Card tile on the All Service page", section: "All Service — Others", defaultIcon: "credit-card" },
   ];
 
   // Helper function to convert hex to RGB
@@ -109,10 +107,6 @@ function renderCustomizationPage(container) {
   }
 
   function render() {
-    // Load saved folder images from localStorage
-    folderImages = JSON.parse(localStorage.getItem("folderImages") || "[]");
-    selectedFolderName = localStorage.getItem("selectedFolderName") || "No folder selected";
-    
     const { primaryColor, buttonImages, profilePhoto, profilePhotoSize, networkImages } = Stores.customization.get();
     const grouped = {};
     buttonTypes.forEach((b) => {
@@ -135,15 +129,7 @@ function renderCustomizationPage(container) {
         </div>
 
         ${
-          activeTab === "images" && folderImages.length === 0
-            ? `<div class="card" style="padding:1.5rem;text-align:center;">
-            <div style="font-size:2rem;margin-bottom:1rem;">📁</div>
-            <h3 style="font-weight:600;margin:0 0 0.5rem;">Pick Image Folder</h3>
-            <p style="color:#6b7280;font-size:0.875rem;margin:0 0 1rem;">Select a folder to load all images from your device storage</p>
-            <button id="pick-folder-btn" style="width:100%;padding:0.75rem;background:#1B1464;color:white;border:none;border-radius:0.5rem;font-weight:600;cursor:pointer;font-size:0.875rem;">📂 Pick Folder</button>
-            <input type="file" id="folderInput" webkitdirectory directory style="display:none;" />
-          </div>`
-            : activeTab === "color"
+          activeTab === "color"
             ? `<div class="card" style="padding:1rem;">
             <h3 style="font-weight:500;margin:0 0 1rem;display:flex;align-items:center;gap:0.5rem;">${Icon("palette", { size: 20, class: "" })} Choose Primary Color</h3>
             
@@ -203,43 +189,6 @@ function renderCustomizationPage(container) {
               <p id="color-display" style="font-size:0.75rem;color:#6b7280;margin:0.5rem 0 0;text-align:center;font-family:monospace;">${primaryColor}</p>
             </div>
           </div>`
-            : activeTab === "images" && folderImages.length > 0
-            ? `<div style="display:flex;flex-direction:column;gap:1rem;">
-            <div class="card" style="padding:1rem;background:#f0fdf4;border:1px solid #bbf7d0;">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
-                <div style="display:flex;align-items:center;gap:0.5rem;">
-                  <span style="color:#16a34a;font-weight:600;">✓ Folder Loaded</span>
-                </div>
-                <button id="refresh-folder-btn" style="padding:0.375rem 0.75rem;background:#16a34a;color:white;border:none;border-radius:0.375rem;font-size:0.75rem;cursor:pointer;font-weight:600;">🔄 Refresh</button>
-              </div>
-              <p style="color:#6b7280;font-size:0.875rem;margin:0;">${selectedFolderName}</p>
-              <p style="color:#059669;font-weight:600;font-size:0.875rem;margin:0.5rem 0 0;"><span id="image-count">${folderImages.length}</span> images loaded</p>
-            </div>
-            
-            <div class="card" style="padding:1rem;">
-              <h3 style="font-weight:600;margin:0 0 1rem;">📸 Your Images</h3>
-              <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:0.75rem;max-height:400px;overflow-y:auto;">
-                ${folderImages.map((img, idx) => `
-                  <div onclick="selectFolderImage(${idx})" style="cursor:pointer;border-radius:0.5rem;overflow:hidden;aspect-ratio:1;background:#f3f4f6;display:flex;align-items:center;justify-content:center;border:2px solid transparent;transition:all 0.3s;" class="folder-image-item" data-idx="${idx}">
-                    <img src="${img.url}" alt="${img.name}" style="width:100%;height:100%;object-fit:cover;">
-                  </div>
-                `).join("")}
-              </div>
-              <div style="margin-top:1rem;padding:1rem;background:#f9fafb;border-radius:0.5rem;border-left:3px solid #1B1464;">
-                <p style="font-size:0.75rem;color:#6b7280;margin:0;">💡 <strong>Tip:</strong> Click an image to preview and use it</p>
-              </div>
-            </div>
-            
-            <div id="image-preview-section" style="display:none;">
-              <div class="card" style="padding:1rem;text-align:center;">
-                <div style="margin-bottom:1rem;">
-                  <img id="preview-img" src="" alt="Preview" style="max-width:100%;max-height:300px;border-radius:0.5rem;box-shadow:0 4px 12px rgba(0,0,0,0.1);">
-                </div>
-                <div id="preview-info" style="text-align:left;background:#f3f4f6;padding:0.75rem;border-radius:0.5rem;font-size:0.875rem;margin-bottom:1rem;word-break:break-all;"></div>
-                <button id="use-folder-image-btn" style="width:100%;padding:0.75rem;background:#1B1464;color:white;border:none;border-radius:0.5rem;font-weight:600;cursor:pointer;font-size:0.875rem;">✓ Use This Image</button>
-              </div>
-            </div>
-            </div>`
             : activeTab === "images"
             ? `<div style="display:flex;flex-direction:column;gap:1.25rem;">
             ${Object.entries(grouped)
@@ -262,15 +211,17 @@ function renderCustomizationPage(container) {
                     </div>
                     <p style="font-size:0.875rem;color:#6b7280;margin:0 0 0.75rem;">${b.description}</p>
                     <div class="flex items-center" style="gap:0.75rem;">
-                      ${
-                        currentImage
-                          ? `<div style="width:4rem;height:4rem;border-radius:${b.key === 'profile' ? '9999px' : '0.5rem'};${b.key === 'profile' ? '' : 'overflow:hidden;'}flex-shrink:0;background:#f3f4f6;display:flex;align-items:center;justify-content:center;"><img src="${currentImage}" alt="${b.label}" style="width:100%;height:100%;object-fit:${b.key === 'profile' ? 'contain' : 'cover'};" /></div>`
-                          : ""
-                      }
+                      <div style="width:4rem;height:4rem;border-radius:${b.key === 'profile' ? '9999px' : '0.5rem'};${b.key === 'profile' ? '' : 'overflow:hidden;'}flex-shrink:0;background:#f3f4f6;display:flex;align-items:center;justify-content:center;">
+                        ${
+                          currentImage
+                            ? `<img src="${currentImage}" alt="${b.label}" style="width:100%;height:100%;object-fit:${b.key === 'profile' ? 'contain' : 'cover'};" />`
+                            : `<span style="color:${primaryColor};">${Icon(b.defaultIcon || "image", { size: 26, class: "" })}</span>`
+                        }
+                      </div>
                       <label style="flex:1;cursor:pointer;">
                         <div style="border:2px dashed #d1d5db;border-radius:0.5rem;padding:1rem;text-align:center;">
                           ${Icon("upload", { size: 20, class: "" })}
-                          <p style="font-size:0.875rem;color:#6b7280;margin:4px 0 0;">Click to upload an image</p>
+                          <p style="font-size:0.875rem;color:#6b7280;margin:4px 0 0;">${currentImage ? "Click to replace image" : "Click to upload an image"}</p>
                         </div>
                         <input type="file" accept="image/*" data-upload="${b.key}" style="display:none;" />
                       </label>
@@ -529,16 +480,17 @@ function renderCustomizationPage(container) {
           render();
         });
       });
+
+      const profileSizeSlider = container.querySelector("#profile-size-slider");
+      if (profileSizeSlider) {
+        profileSizeSlider.addEventListener("input", (e) => {
+          const val = parseFloat(e.target.value);
+          const label = container.querySelector("#profile-size-value");
+          if (label) label.textContent = Math.round(val * 100) + "%";
+          Stores.customization.set({ profilePhotoSize: val });
+        });
+      }
     }, 0);
-    const profileSizeSlider = container.querySelector("#profile-size-slider");
-    if (profileSizeSlider) {
-      profileSizeSlider.addEventListener("input", (e) => {
-        const val = parseFloat(e.target.value);
-        const label = container.querySelector("#profile-size-value");
-        if (label) label.textContent = Math.round(val * 100) + "%";
-        Stores.customization.set({ profilePhotoSize: val });
-      });
-    }
     container.querySelectorAll("[data-network-upload]").forEach((input) => {
       input.addEventListener("change", (e) => {
         const file = e.target.files[0];
@@ -621,126 +573,9 @@ function renderCustomizationPage(container) {
         });
       });
     }, 0);
-
-    // Folder Image Management
-    const pickFolderBtn = container.querySelector("#pick-folder-btn");
-    const folderInput = container.querySelector("#folderInput");
-    
-    if (pickFolderBtn && folderInput) {
-      pickFolderBtn.addEventListener("click", () => {
-        folderInput.click();
-      });
-
-      folderInput.addEventListener("change", (e) => {
-        const files = Array.from(e.target.files);
-        const imageExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg', '.ico'];
-        let processedCount = 0;
-        folderImages = [];
-        let pendingReads = [];
-
-        for (const file of files) {
-          const ext = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
-          if (imageExtensions.includes(ext)) {
-            const reader = new FileReader();
-            
-            reader.onload = (evt) => {
-              folderImages.push({
-                name: file.name,
-                path: file.webkitRelativePath || file.name,
-                url: evt.target.result,
-                size: file.size,
-                type: file.type
-              });
-              
-              processedCount++;
-              if (processedCount === pendingReads.length) {
-                folderImages.sort((a, b) => a.name.localeCompare(b.name));
-                selectedFolderName = e.target.files[0]?.webkitRelativePath?.split('/')[0] || "Custom Folder";
-                
-                localStorage.setItem("folderImages", JSON.stringify(folderImages));
-                localStorage.setItem("selectedFolderName", selectedFolderName);
-                
-                toast.success(`${folderImages.length} images loaded!`);
-                render();
-              }
-            };
-            
-            reader.readAsDataURL(file);
-            pendingReads.push(file);
-          }
-        }
-
-        if (pendingReads.length === 0) {
-          toast.error("No images found in folder");
-        }
-      });
-    }
-
-    // Refresh folder images
-    const refreshBtn = container.querySelector("#refresh-folder-btn");
-    if (refreshBtn) {
-      refreshBtn.addEventListener("click", () => {
-        folderInput.click();
-      });
-    }
   }
 
   render();
-}
-
-// Global function for selecting folder images
-window.selectFolderImage = function(idx) {
-  const folderImages = JSON.parse(localStorage.getItem("folderImages") || "[]");
-  
-  if (idx < folderImages.length) {
-    const img = folderImages[idx];
-    const previewSection = document.querySelector("#image-preview-section");
-    const previewImg = document.querySelector("#preview-img");
-    const previewInfo = document.querySelector("#preview-info");
-    const useBtn = document.querySelector("#use-folder-image-btn");
-    
-    previewImg.src = img.url;
-    previewInfo.innerHTML = `
-      <strong>📝 File Name:</strong> ${img.name}<br>
-      <strong>📂 Path:</strong> ${img.path}<br>
-      <strong>📊 Size:</strong> ${formatFileSize(img.size)}<br>
-      <strong>🏷️ Type:</strong> ${img.type || 'Unknown'}
-    `;
-    
-    if (previewSection) previewSection.style.display = "block";
-    
-    // Highlight selected image
-    document.querySelectorAll(".folder-image-item").forEach((el, i) => {
-      if (i === idx) {
-        el.style.borderColor = "#1B1464";
-        el.style.boxShadow = "0 0 0 2px #1B1464";
-      } else {
-        el.style.borderColor = "transparent";
-        el.style.boxShadow = "none";
-      }
-    });
-    
-    if (useBtn) {
-      useBtn.onclick = () => {
-        const confirmed = confirm(`Use this image?\n\n${img.name}\n\nPath: ${img.path}`);
-        if (confirmed) {
-          navigator.clipboard.writeText(img.path).then(() => {
-            toast.success("Path copied to clipboard!");
-          }).catch(() => {
-            toast.success(`Image selected: ${img.name}`);
-          });
-        }
-      };
-    }
-  }
-};
-
-function formatFileSize(bytes) {
-  if (bytes === 0) return '0 Bytes';
-  const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
 }
 
 window.renderCustomizationPage = renderCustomizationPage;
