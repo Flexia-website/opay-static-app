@@ -1,3 +1,13 @@
+// Format balance to display decimals properly
+function formatBalanceMe(balance) {
+  if (typeof balance !== 'number') balance = parseFloat(balance) || 0;
+  const isDecimal = balance % 1 !== 0;
+  if (isDecimal) {
+    return balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  return Math.floor(balance).toLocaleString();
+}
+
 function renderMePage(container, routeState) {
   let isLocked = true;
   let passcode = "";
@@ -93,7 +103,7 @@ function renderMePage(container, routeState) {
             Total Balance ${Icon(showBalance ? "eye" : "eye-off", { size: 16 })}
           </button>
           <div style="font-size:1.875rem;font-weight:700;color:#111827;letter-spacing:0.05em;margin-top:4px;">
-            ${showBalance ? "₦" + balance.toLocaleString() : "****"}
+            ${showBalance ? "₦" + formatBalanceMe(balance) : "****"}
           </div>
           <div style="margin-top:0.75rem;display:inline-flex;align-items:center;gap:0.5rem;background:white;border-radius:9999px;padding:0.5rem 1rem;font-size:0.875rem;">
             Interest Credited Today <span style="color:#059669;font-weight:600;letter-spacing:0.05em;">****</span>

@@ -1,3 +1,13 @@
+// Format balance to display decimals properly
+function formatBalance(balance) {
+  if (typeof balance !== 'number') balance = parseFloat(balance) || 0;
+  const isDecimal = balance % 1 !== 0;
+  if (isDecimal) {
+    return balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  return Math.floor(balance).toLocaleString();
+}
+
 function renderDashboard(container) {
   const { balance } = Stores.balance.get();
   const { primaryColor, buttonImages, profilePhoto, profilePhotoSize } = Stores.customization.get();
@@ -31,20 +41,19 @@ function renderDashboard(container) {
 
   function renderBalanceCard() {
     return `
-    <div style="background:${primaryColor};margin:0.625rem 0.75rem 0;padding:1rem;border-radius:1.125rem;color:white;box-shadow:0 6px 20px -6px ${primaryColor}80;">
-      <div class="flex justify-between items-center" style="margin-bottom:0.75rem;">
-        <div class="flex items-center" style="gap:5px;">
-          ${Icon("shield-check", { size: 16 })}
-          <span style="font-size:0.8125rem;font-weight:700;">Available Balance</span>
+    <div style="background:${primaryColor};margin:0;padding:0.7rem 0.5rem;border-radius:0.875rem;color:white;box-shadow:0 6px 20px -6px ${primaryColor}80;">
+      <div class="flex justify-between items-center" style="margin-bottom:0.4rem;">
+        <div class="flex items-center" style="gap:4px;">
+          ${Icon("shield-check", { size: 14 })}
+          <span style="font-size:0.75rem;font-weight:700;">Available Balance</span>
           <button id="toggle-balance" style="display:flex;align-items:center;justify-content:center;border:none;background:none;color:rgba(255,255,255,0.85);padding:0;">
-            ${Icon(showBalance ? "eye" : "eye-off", { size: 15 })}
+            ${Icon(showBalance ? "eye" : "eye-off", { size: 13 })}
           </button>
         </div>
-        <span id="tx-history-link" style="font-size:0.8125rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:2px;">Transaction History ${Icon("chevron-right", { size: 14 })}</span>
+        <span id="tx-history-link" style="font-size:0.7rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:1px;margin-right:0.2rem;">Tx History ${Icon("chevron-right", { size: 12 })}</span>
       </div>
       <div class="flex justify-between items-center">
-        <h2 id="balance-amount" style="font-size:1.75rem;font-weight:800;margin:0;letter-spacing:0.02em;">${showBalance ? "₦" + balance.toLocaleString() : "****"}</h2>
-
+        <h2 id="balance-amount" style="font-size:1.5rem;font-weight:800;margin:0;letter-spacing:0.01em;">${showBalance ? "₦" + formatBalance(balance) : "****"}</h2>
       </div>
     </div>`;
   }
@@ -54,29 +63,29 @@ function renderDashboard(container) {
     const recent = transactions.slice(0, 2);
     if (recent.length === 0) return "";
     return `
-    <div style="background:white;margin:0.625rem 0.75rem 0;border-radius:1.125rem;padding:0.875rem 1rem;box-shadow:0 1px 2px rgb(0 0 0 / 0.04);">
-      <div class="flex justify-between items-center" style="margin-bottom:0.5rem;">
-        <h3 style="font-size:0.875rem;font-weight:600;margin:0;">Recent Transactions</h3>
-        <button id="tx-view-all" style="font-size:0.75rem;color:${primaryColor};background:none;border:none;font-weight:600;">View All</button>
+    <div style="background:white;margin:0;padding:0.6rem 0.8rem;border-radius:0.875rem;box-shadow:0 1px 2px rgb(0 0 0 / 0.04);">
+      <div class="flex justify-between items-center" style="margin-bottom:0.35rem;">
+        <h3 style="font-size:0.8rem;font-weight:600;margin:0;">Recent</h3>
+        <button id="tx-view-all" style="font-size:0.7rem;color:${primaryColor};background:none;border:none;font-weight:600;">View All</button>
       </div>
       ${recent
         .map(
           (t, i) => `
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0;${
-          i < recent.length - 1 ? "border-bottom:1px solid #f3f4f6;" : ""
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:0.35rem 0;${
+          i < recent.length - 1 ? "border-bottom:0.5px solid #f3f4f6;" : ""
         }">
-          <div class="flex items-center" style="gap:0.625rem;">
-            <div style="width:2.125rem;height:2.125rem;border-radius:9999px;background:var(--opay-accent);display:flex;align-items:center;justify-content:center;color:${primaryColor};">
-              ${Icon(t.icon || "user", { size: 16 })}
+          <div class="flex items-center" style="gap:0.5rem;">
+            <div style="width:1.75rem;height:1.75rem;border-radius:9999px;background:var(--opay-accent);display:flex;align-items:center;justify-content:center;color:${primaryColor};">
+              ${Icon(t.icon || "user", { size: 14 })}
             </div>
-            <div>
-              <p style="font-weight:500;font-size:0.875rem;margin:0;">${t.type}</p>
-              <p style="font-size:0.75rem;color:#9ca3af;margin:0;">${t.date}</p>
+            <div style="min-width:0;">
+              <p style="font-weight:500;font-size:0.75rem;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${t.type}</p>
+              <p style="font-size:0.65rem;color:#9ca3af;margin:0;">${t.date}</p>
             </div>
           </div>
-          <div style="text-align:right;">
-            <p style="font-size:0.875rem;font-weight:600;margin:0;color:${t.amount.startsWith("+") ? "#16a34a" : "#111827"};">${t.amount}</p>
-            <p style="font-size:0.75rem;color:#16a34a;margin:0;">${t.status}</p>
+          <div style="text-align:right;margin-left:0.5rem;">
+            <p style="font-size:0.75rem;font-weight:600;margin:0;color:${t.amount.startsWith("+") ? "#16a34a" : "#111827"};">${t.amount}</p>
+            <p style="font-size:0.65rem;color:#16a34a;margin:0;">${t.status}</p>
           </div>
         </div>`
         )
@@ -86,8 +95,8 @@ function renderDashboard(container) {
 
   function fullHtml() {
     return `
-    <div class="pb-nav-safe" style="min-height:100vh;background:#f5f6f8;">
-      <header class="app-header flex items-center justify-between" style="padding:0.75rem 1rem;background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;border-bottom:none;box-shadow:none;">
+    <div class="pb-nav-safe" style="height:100vh;background:#f5f6f8;width:100%;overflow:hidden;display:flex;flex-direction:column;">
+      <header class="app-header flex items-center justify-between" style="padding:0.5rem 0.5rem;background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;border-bottom:none;box-shadow:none;flex-shrink:0;">
         <div class="flex items-center" style="gap:0.5rem;">
           <button id="profile-btn" style="width:${2.25 * (profilePhotoSize || 1)}rem;height:${2.25 * (profilePhotoSize || 1)}rem;border-radius:9999px;background:transparent;display:flex;align-items:center;justify-content:center;border:none;flex-shrink:0;">
             ${
@@ -96,100 +105,63 @@ function renderDashboard(container) {
                 : `<span style="color:#111827;">${Icon("user", { size: Math.round(18 * (profilePhotoSize || 1)) })}</span>`
             }
           </button>
-          <h1 style="font-size:1.0625rem;font-weight:700;margin:0;">Hi, CLINTON</h1>
+          <h1 style="font-size:1rem;font-weight:700;margin:0;">Hi, CLINTON</h1>
         </div>
-        <div class="flex items-center" style="gap:1.125rem;">
+        <div class="flex items-center" style="gap:1rem;">
           <button id="help-btn" style="position:relative;background:none;border:none;color:#374151;">
-            ${iconOrImage("headphones", "help", 22)}
-            <span style="position:absolute;top:-6px;right:-10px;background:#ec4899;color:white;font-size:8px;font-weight:700;padding:1px 5px;border-radius:9999px;">HELP</span>
+            ${iconOrImage("headphones", "help", 20)}
+            <span style="position:absolute;top:-6px;right:-10px;background:#ec4899;color:white;font-size:7px;font-weight:700;padding:1px 4px;border-radius:9999px;">HELP</span>
           </button>
-          <button id="qr-btn" style="background:none;border:none;color:#374151;">${iconOrImage("qr-code", "qrcode", 22)}</button>
+          <button id="qr-btn" style="background:none;border:none;color:#374151;">${iconOrImage("qr-code", "qrcode", 20)}</button>
           <button id="notif-btn" style="position:relative;background:none;border:none;color:#374151;">
-            ${iconOrImage("bell", "notifications", 22)}
-            <span style="position:absolute;top:-6px;right:-8px;background:#ef4444;color:white;font-size:9px;font-weight:700;border-radius:9999px;min-width:16px;height:16px;padding:0 3px;display:flex;align-items:center;justify-content:center;">99+</span>
+            ${iconOrImage("bell", "notifications", 20)}
+            <span style="position:absolute;top:-6px;right:-8px;background:#ef4444;color:white;font-size:8px;font-weight:700;border-radius:9999px;min-width:14px;height:14px;padding:0 2px;display:flex;align-items:center;justify-content:center;font-size:7px;">99</span>
           </button>
         </div>
       </header>
 
-      <div id="balance-card-wrap">${renderBalanceCard()}</div>
-      <div id="tx-card-wrap">${renderTransactionsCard()}</div>
+      <div style="flex:1;overflow-y:auto;padding-bottom:3rem;">
+        <div id="balance-card-wrap" style="margin:0.4rem 0.5rem 0;padding:0;">${renderBalanceCard()}</div>
+        <div id="tx-card-wrap" style="margin:0.3rem 0.5rem 0;padding:0;">${renderTransactionsCard()}</div>
 
-      <div style="background:white;margin:0.625rem 0.75rem 0;padding:1.125rem 0.5rem;border-radius:1.125rem;box-shadow:0 1px 2px rgb(0 0 0 / 0.04);">
-        <div class="grid" style="grid-template-columns:repeat(3,1fr);">
-          ${quickActions
-            .map(
-              (a) => `
-            <button data-nav="${a.path}" style="display:flex;flex-direction:column;align-items:center;gap:0.5rem;padding:0.375rem;background:none;border:none;">
-              <div style="width:2.75rem;height:2.75rem;border-radius:9999px;display:flex;align-items:center;justify-content:center;background:${primaryColor}17;">
-                ${iconOrImage(a.icon, a.key, 22)}
-              </div>
-              <span style="font-size:0.8125rem;font-weight:600;color:#111827;">${a.label}</span>
-            </button>`
-            )
-            .join("")}
-        </div>
-      </div>
-
-      <div style="background:white;margin:0.625rem 0.75rem 0;padding:1.125rem 0.5rem;border-radius:1.125rem;box-shadow:0 1px 2px rgb(0 0 0 / 0.04);">
-        <div class="grid" style="grid-template-columns:repeat(4,1fr);row-gap:1.125rem;">
-          ${services
-            .map(
-              (s) => `
-            <button data-nav="${s.path}" style="display:flex;flex-direction:column;align-items:center;gap:0.5rem;position:relative;padding:0.25rem;background:none;border:none;">
-              <div style="position:relative;">
-                <div style="width:3rem;height:3rem;border-radius:9999px;display:flex;align-items:center;justify-content:center;background:${primaryColor}17;">
-                  ${iconOrImage(s.icon, s.key, 24)}
+        <div style="background:white;margin:0.3rem 0.5rem 0;padding:0.75rem 0.5rem;border-radius:0.875rem;box-shadow:0 1px 2px rgb(0 0 0 / 0.04);">
+          <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:0.3rem;">
+            ${quickActions
+              .map(
+                (a) => `
+              <button data-nav="${a.path}" style="display:flex;flex-direction:column;align-items:center;gap:0.3rem;padding:0.25rem;background:none;border:none;">
+                <div style="width:2.5rem;height:2.5rem;border-radius:9999px;display:flex;align-items:center;justify-content:center;background:${primaryColor}17;">
+                  ${iconOrImage(a.icon, a.key, 20)}
                 </div>
-                ${
-                  s.badge
-                    ? `<span style="position:absolute;top:-6px;right:-10px;background:#ef4444;color:white;font-size:8px;font-weight:700;padding:2px 5px;border-radius:9999px;white-space:nowrap;">${s.badge}</span>`
-                    : ""
-                }
-              </div>
-              <span style="font-size:0.75rem;font-weight:600;color:#111827;">${s.label}</span>
-            </button>`
-            )
-            .join("")}
-        </div>
-      </div>
-
-      <div style="margin:0.625rem 0.75rem 0;background:white;padding:0.875rem 1rem;border-radius:1.125rem;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 2px rgb(0 0 0 / 0.04);">
-        <div class="flex items-center" style="gap:0.625rem;">
-          <div style="color:${primaryColor};">${Icon("bell", { size: 26 })}</div>
-          <div>
-            <h3 style="font-weight:700;font-size:0.875rem;margin:0;">Take Control, Stay Informed</h3>
-            <p style="font-size:0.75rem;color:#6b7280;margin:2px 0 0;">Add your email, get the latest from OPay</p>
+                <span style="font-size:0.75rem;font-weight:600;color:#111827;">${a.label}</span>
+              </button>`
+              )
+              .join("")}
           </div>
         </div>
-      </div>
 
-      <div style="margin:0.75rem 0.75rem 0;background:linear-gradient(135deg,#eaf9ef,#f7fbe9);border-radius:1.125rem;padding:1rem;">
-        <div class="flex items-center justify-between" style="margin-bottom:0.625rem;">
-          <h3 style="font-weight:800;font-size:1.0625rem;margin:0;color:#111827;">Start Fixed Saving with OPay</h3>
-          <span style="color:#111827;display:flex;">${Icon("gift", { size: 20 })}</span>
-        </div>
-        <div style="border-top:1px dashed #d1d5db;margin-bottom:0.75rem;"></div>
-        <div class="flex items-center justify-between">
-          <div class="flex items-center" style="gap:0.75rem;">
-            <div style="color:#16a34a;">${Icon("banknote", { size: 28 })}</div>
-            <div>
-              <p style="font-weight:700;font-size:0.9375rem;margin:0;">Special Fixed</p>
-              <p style="font-size:0.75rem;color:#6b7280;margin:2px 0 0;">Start from ₦1,000 and enjoy <span style="color:#16a34a;font-weight:700;">22% p.a.</span> returns!</p>
-            </div>
-          </div>
-          <button data-nav="/safebox" style="background:${primaryColor};color:white;padding:0.5rem 1.25rem;border-radius:9999px;font-size:0.875rem;font-weight:700;border:none;white-space:nowrap;">Save</button>
-        </div>
-      </div>
-
-      <div style="margin:0.75rem 0.75rem 0;background:white;border-radius:1.125rem;padding:0.875rem 1rem;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 2px rgb(0 0 0 / 0.04);">
-        <div class="flex items-center" style="gap:0.75rem;">
-          <div style="width:2.75rem;height:2.75rem;border-radius:9999px;background:#e0e7ff;display:flex;align-items:center;justify-content:center;color:#4f46e5;">${Icon("hand-heart", { size: 22 })}</div>
-          <div>
-            <h3 style="font-weight:700;font-size:0.9375rem;margin:0;">Share OPay with Others</h3>
-            <p style="font-size:0.75rem;color:#6b7280;margin:2px 0 0;">Help a loved one get their own account in minutes</p>
+        <div style="background:white;margin:0.3rem 0.5rem 0;padding:0.75rem 0.5rem;border-radius:0.875rem;box-shadow:0 1px 2px rgb(0 0 0 / 0.04);">
+          <div class="grid" style="grid-template-columns:repeat(4,1fr);gap:0.3rem;row-gap:0.7rem;">
+            ${services
+              .map(
+                (s) => `
+              <button data-nav="${s.path}" style="display:flex;flex-direction:column;align-items:center;gap:0.3rem;position:relative;padding:0.15rem;background:none;border:none;">
+                <div style="position:relative;">
+                  <div style="width:2.75rem;height:2.75rem;border-radius:9999px;display:flex;align-items:center;justify-content:center;background:${primaryColor}17;">
+                    ${iconOrImage(s.icon, s.key, 22)}
+                  </div>
+                  ${
+                    s.badge
+                      ? `<span style="position:absolute;top:-5px;right:-8px;background:#ef4444;color:white;font-size:7px;font-weight:700;padding:1px 4px;border-radius:9999px;white-space:nowrap;">${s.badge}</span>`
+                      : ""
+                  }
+                </div>
+                <span style="font-size:0.7rem;font-weight:600;color:#111827;">${s.label}</span>
+              </button>`
+              )
+              .join("")}
           </div>
         </div>
-        <button data-nav="/invitation" style="background:${primaryColor};color:white;padding:0.5rem 1.1rem;border-radius:9999px;font-size:0.875rem;font-weight:700;border:none;">Go</button>
       </div>
 
       ${BottomNav("home")}

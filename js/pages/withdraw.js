@@ -1,3 +1,13 @@
+// Format balance to display decimals properly
+function formatBalanceWithdraw(balance) {
+  if (typeof balance !== 'number') balance = parseFloat(balance) || 0;
+  const isDecimal = balance % 1 !== 0;
+  if (isDecimal) {
+    return balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  return Math.floor(balance).toLocaleString();
+}
+
 function renderWithdrawPage(container) {
   const { primaryColor, buttonBackgroundColor } = Stores.customization.get();
   const withdrawalOptions = [
@@ -26,7 +36,7 @@ function renderWithdrawPage(container) {
               Available Balance
               <button id="toggle-balance" style="background:none;border:none;color:#6b7280;display:flex;">${Icon(showBalance ? "eye-off" : "eye", { size: 16 })}</button>
             </div>
-            <h2 style="font-size:1.25rem;font-weight:700;margin:4px 0 0;">${showBalance ? "₦" + balance.toLocaleString() : "****"}</h2>
+            <h2 style="font-size:1.25rem;font-weight:700;margin:4px 0 0;">${showBalance ? "₦" + formatBalanceWithdraw(balance) : "****"}</h2>
           </div>
 
           <div style="margin-bottom:1rem;">
