@@ -1,6 +1,8 @@
 function renderSafeboxPage(container) {
   function render() {
     const { safeboxBalance } = Stores.safebox.get();
+    const safeboxBalanceStr = safeboxBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const sbBalanceFontSize = safeboxBalanceStr.length > 13 ? "1.5rem" : safeboxBalanceStr.length > 10 ? "1.875rem" : safeboxBalanceStr.length > 7 ? "2.125rem" : "2.5rem";
     container.innerHTML = `
     <div style="min-height:100vh;background:#daf1e2;">
       <div style="padding:0.875rem 1rem;display:flex;align-items:center;justify-content:space-between;">
@@ -12,13 +14,13 @@ function renderSafeboxPage(container) {
       </div>
 
       <div style="margin:0 1rem;position:relative;">
-        <div style="position:absolute;left:0;top:0;bottom:0;width:70%;background:#bfe6cc;border-radius:1.25rem 0.5rem 0.5rem 1.25rem;"></div>
+        <div style="position:absolute;left:0;top:0;bottom:0;width:58%;background:#bfe6cc;border-radius:1.25rem 0.5rem 0.5rem 1.25rem;"></div>
         <div style="position:relative;border-radius:1.25rem;padding:1.125rem 1.125rem 1rem;">
           <div class="flex items-center" style="gap:0.5rem;margin-bottom:0.625rem;">
             <span style="font-size:1rem;font-weight:600;color:#111827;">SafeBox</span>
             <span style="background:#111827;color:white;font-size:0.6875rem;font-weight:700;padding:2px 9px;border-radius:9999px;">15% p.a.</span>
           </div>
-          <div style="font-size:2.5rem;font-weight:800;color:#111827;line-height:1.1;">₦${safeboxBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+          <div style="font-size:${sbBalanceFontSize};font-weight:800;color:#111827;line-height:1.1;white-space:nowrap;">₦${safeboxBalanceStr}</div>
           <p style="font-size:0.875rem;color:#4b5563;margin:0.5rem 0 1rem;max-width:65%;">Save daily, weekly or monthly with discipline</p>
 
           <button id="sb-withdrawal-date" style="background:rgba(255,255,255,0.75);border-radius:9999px;padding:0.5rem 0.875rem;display:inline-flex;align-items:center;gap:0.5rem;font-size:0.8125rem;font-weight:600;border:none;color:#111827;">
@@ -211,18 +213,22 @@ function renderSafeboxDepositPage(container) {
     const amountInput = container.querySelector("#sbd-amount");
     amountInput.addEventListener("focus", () => {
       if (keypadOpen) return;
+      if (amountInput._keypadCooldown) return;
       keypadOpen = true;
       openNumericKeypad({
         decimal: true,
         value: amount,
         onInput: (v) => {
           amount = v;
-          render();
-          const el = container.querySelector("#sbd-amount");
-          if (el) el.focus();
+          amountInput.value = amount;
         },
         onClose: () => {
           keypadOpen = false;
+          amountInput._keypadCooldown = true;
+          amountInput.blur();
+          setTimeout(() => {
+            amountInput._keypadCooldown = false;
+          }, 400);
         },
       });
     });
@@ -290,12 +296,12 @@ function renderSafeboxWithdrawPage(container) {
           <span style="color:#111827;font-size:0.9375rem;">Breaking fee(₦)</span>
           <span style="color:#9ca3af;">${Icon("help-circle", { size: 15 })}</span>
         </div>
-        <p style="font-size:1.0625rem;color:#111827;margin:0 0 1.25rem;">${breakingFee.toFixed(2)}</p>
+        <p id="sbw-breaking-fee" style="font-size:1.0625rem;color:#111827;margin:0 0 1.25rem;">${breakingFee.toFixed(2)}</p>
 
         <div style="margin-bottom:0.25rem;">
           <span style="color:#111827;font-size:0.9375rem;">Withdraw to OWealth(₦)</span>
         </div>
-        <p style="font-size:1.0625rem;color:#111827;margin:0 0 1.5rem;">${netAmount.toFixed(2)}</p>
+        <p id="sbw-net-amount" style="font-size:1.0625rem;color:#111827;margin:0 0 1.5rem;">${netAmount.toFixed(2)}</p>
       </div>
 
       <div class="pb-nav-safe"></div>
@@ -308,18 +314,29 @@ function renderSafeboxWithdrawPage(container) {
     const amountInput = container.querySelector("#sbw-amount");
     amountInput.addEventListener("focus", () => {
       if (keypadOpen) return;
+      if (amountInput._keypadCooldown) return;
       keypadOpen = true;
       openNumericKeypad({
         decimal: true,
         value: amount,
         onInput: (v) => {
           amount = v;
-          render();
-          const el = container.querySelector("#sbw-amount");
-          if (el) el.focus();
+          amountInput.value = amount;
+          const val = parseFloat(amount) || 0;
+          const fee = val * 0.025;
+          const net = Math.max(0, val - fee);
+          const feeEl = container.querySelector("#sbw-breaking-fee");
+          const netEl = container.querySelector("#sbw-net-amount");
+          if (feeEl) feeEl.textContent = fee.toFixed(2);
+          if (netEl) netEl.textContent = net.toFixed(2);
         },
         onClose: () => {
           keypadOpen = false;
+          amountInput._keypadCooldown = true;
+          amountInput.blur();
+          setTimeout(() => {
+            amountInput._keypadCooldown = false;
+          }, 400);
         },
       });
     });

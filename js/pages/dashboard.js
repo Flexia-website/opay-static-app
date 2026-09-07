@@ -40,6 +40,8 @@ function renderDashboard(container) {
   }
 
   function renderBalanceCard() {
+    const balanceDisplay = showBalance ? "₦" + formatBalance(balance) : "****";
+    const balanceFontSize = balanceDisplay.length > 14 ? "0.95rem" : balanceDisplay.length > 11 ? "1.1rem" : balanceDisplay.length > 9 ? "1.25rem" : "1.4rem";
     return `
     <div style="background:${primaryColor};margin:0;padding:0.7rem 0.5rem;border-radius:0.875rem;color:white;box-shadow:0 6px 20px -6px ${primaryColor}80;">
       <div class="flex justify-between items-center" style="margin-bottom:0.4rem;">
@@ -53,8 +55,8 @@ function renderDashboard(container) {
         <span id="tx-history-link" style="font-size:0.7rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:1px;margin-right:0.2rem;">Transaction History ${Icon("chevron-right", { size: 12 })}</span>
       </div>
       <div class="flex justify-between items-center">
-        <h2 id="balance-amount" style="font-size:1.4rem;font-weight:800;margin:0;letter-spacing:0.01em;display:flex;align-items:center;gap:4px;">${showBalance ? "₦" + formatBalance(balance) : "****"} ${Icon("chevron-right", { size: 16 })}</h2>
-        <button id="add-money-btn" style="background:white;color:${primaryColor};padding:0.4rem 0.9rem;border-radius:9999px;font-size:0.75rem;font-weight:700;border:none;display:flex;align-items:center;gap:3px;">
+        <h2 id="balance-amount" style="font-size:${balanceFontSize};font-weight:800;margin:0;letter-spacing:0.01em;display:flex;align-items:center;gap:4px;white-space:nowrap;">${balanceDisplay} ${Icon("chevron-right", { size: 16 })}</h2>
+        <button id="add-money-btn" style="background:white;color:${primaryColor};padding:0.4rem 0.9rem;border-radius:9999px;font-size:0.75rem;font-weight:700;border:none;display:flex;align-items:center;gap:3px;flex-shrink:0;">
           ${iconOrImage("plus", "add-money", 13)} Add Money
         </button>
       </div>
@@ -143,12 +145,12 @@ function renderDashboard(container) {
           </div>
         </div>
 
-        <div style="margin:0.3rem 0.5rem 0;background:white;padding:0.6rem 0.7rem;border-radius:0.875rem;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 2px rgb(0 0 0 / 0.04);">
+        <div style="margin:0.3rem 0.5rem 0;background:white;padding:0.55rem 0.7rem;border-radius:0.875rem;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 2px rgb(0 0 0 / 0.04);">
           <div class="flex items-center" style="gap:0.5rem;">
-            <div style="color:${primaryColor};">${iconOrImage("mail", "stay-informed", 20)}</div>
+            <div style="color:${primaryColor};display:flex;flex-shrink:0;">${iconOrImage("mail", "stay-informed", 24)}</div>
             <div>
-              <h3 style="font-weight:700;font-size:0.7rem;margin:0;">Take Control, Stay Informed</h3>
-              <p style="font-size:0.625rem;color:#6b7280;margin:1px 0 0;">Add your email, get the latest from OPay</p>
+              <h3 style="font-weight:700;font-size:0.7rem;margin:0;line-height:1.2;">Take Control, Stay Informed</h3>
+              <p style="font-size:0.625rem;color:#6b7280;margin:1px 0 0;line-height:1.2;">Add your email, get the latest from OPay</p>
             </div>
           </div>
         </div>

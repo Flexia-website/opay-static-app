@@ -56,7 +56,7 @@ function renderLoginPage(container) {
             <button id="toggle-pw" style="position:absolute;right:calc(0.875rem * 1);top:50%;transform:translateY(-50%);background:none;border:none;color:#6b7280;cursor:pointer;display:flex;align-items:center;">${Icon(showPassword ? "eye" : "eye-off", { size: 16 })}</button>
           </div>
           <div style="display:flex;justify-content:flex-end;margin:calc(0.375rem * 1) 0 calc(1rem * 1);padding:0;">
-            <button style="font-size:calc(0.75rem * 1);color:var(--opay-primary);font-weight:500;background:none;border:none;cursor:pointer;">Forgot Password?</button>
+            <button id="forgot-password-btn" style="font-size:calc(0.75rem * 1);color:var(--opay-primary);font-weight:500;background:none;border:none;cursor:pointer;">Forgot Password?</button>
           </div>
           <button id="login-submit" ${password.length < 6 ? "disabled" : ""} style="width:100%;height:calc(2.5rem * 1);border-radius:9999px;color:white;font-size:calc(0.875rem * 1);font-weight:500;border:none;cursor:pointer;background:${
             password.length < 6 ? "rgba(0,189,106,0.5)" : "var(--opay-primary)"
@@ -80,9 +80,14 @@ function renderLoginPage(container) {
       showPinLogin = false;
       render();
     });
+    const forgotBtn = container.querySelector("#forgot-password-btn");
+    if (forgotBtn) forgotBtn.addEventListener("click", () => {
+      toast.success("Password reset link sent to your registered email/phone");
+    });
     const pwInput = container.querySelector("#pw-input");
     pwInput.addEventListener("focus", () => {
       if (pwInput._keypadOpen) return;
+      if (pwInput._keypadCooldown) return;
       pwInput._keypadOpen = true;
       openNumericKeypad({
         decimal: false,
@@ -100,6 +105,11 @@ function renderLoginPage(container) {
         onComplete: () => handlePasswordLogin(),
         onClose: () => {
           pwInput._keypadOpen = false;
+          pwInput._keypadCooldown = true;
+          pwInput.blur();
+          setTimeout(() => {
+            pwInput._keypadCooldown = false;
+          }, 400);
         },
       });
     });
