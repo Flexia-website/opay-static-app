@@ -63,7 +63,11 @@ function openNumericKeypad(opts) {
   backdrop.addEventListener("click", (e) => {
     if (e.target === backdrop) close();
   });
-  panel.querySelector("[data-done]").addEventListener("click", close);
+  panel.querySelector("[data-done]").addEventListener("click", (e) => {
+    e.preventDefault();
+    e.target.blur();
+    close();
+  });
   panel.querySelectorAll("[data-key]").forEach((btn) => {
     const key = btn.dataset.key;
     if (key === "") return;
@@ -98,12 +102,13 @@ function attachAmountKeypad(inputEl, opts) {
   inputEl.setAttribute("inputmode", "none");
   inputEl.setAttribute("autocomplete", "off");
   inputEl.style.caretColor = "transparent";
-  
+
   inputEl.addEventListener("focus", (e) => {
     e.preventDefault();
     if (inputEl._keypadOpen) return;
+    if (inputEl._keypadCooldown) return;
     inputEl._keypadOpen = true;
-    
+
     // Prevent any native keyboard from showing
     inputEl.blur();
     setTimeout(() => {
@@ -116,12 +121,19 @@ function attachAmountKeypad(inputEl, opts) {
         },
         onClose: () => {
           inputEl._keypadOpen = false;
+          // Ignore any focus events that fire in the next moment (e.g. from
+          // the Done button's own click/blur cycle) so the keypad doesn't
+          // immediately reopen itself.
+          inputEl._keypadCooldown = true;
           inputEl.blur();
+          setTimeout(() => {
+            inputEl._keypadCooldown = false;
+          }, 400);
         },
       });
     }, 100);
   });
-  
+
   inputEl.addEventListener("keydown", (e) => {
     e.preventDefault();
   });
