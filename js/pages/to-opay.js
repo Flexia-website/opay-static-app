@@ -46,7 +46,7 @@ function renderToOpayPage(container) {
                   <input id="recipient-name" type="text" placeholder="Recipient Name (Optional)" value="${recipientName}" style="width:100%;padding:0.875rem;border:1px solid #e5e7eb;border-radius:0.75rem;font-size:0.9375rem;font-family:inherit;margin-bottom:0.75rem;" />
                   <div style="margin-bottom:0.75rem;">
                     <label style="font-size:0.8125rem;color:#6b7280;display:block;margin-bottom:0.5rem;">Amount</label>
-                    <input id="amount-input" type="text" placeholder="Enter amount" value="${amount}" style="width:100%;padding:0.875rem;border:1px solid #e5e7eb;border-radius:0.75rem;font-size:0.9375rem;font-family:inherit;" />
+                    <input id="amount-input" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="Enter amount" value="${amount}" style="width:100%;padding:0.875rem;border:1px solid #e5e7eb;border-radius:0.75rem;font-size:0.9375rem;font-family:inherit;" />
                   </div>
                   <button id="proceed-btn" style="width:100%;background:#00B876;color:white;border:none;padding:0.75rem 1.5rem;border-radius:0.75rem;font-weight:600;font-size:0.9375rem;cursor:pointer;">Proceed</button>
                 </div>

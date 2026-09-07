@@ -103,7 +103,7 @@ function renderPlay4achildPage(container) {
               <label style="display:block;font-size:0.875rem;color:#374151;margin-bottom:4px;">Donation Amount</label>
               <div style="position:relative;">
                 <span style="position:absolute;left:0.75rem;top:50%;transform:translateY(-50%);color:#6b7280;">₦</span>
-                <input id="donate-amount" type="number" class="input" style="padding-left:2rem;" placeholder="0.00" value="${amount}" />
+                <input id="donate-amount" type="text" inputmode="numeric" pattern="[0-9]*" class="input" style="padding-left:2rem;" placeholder="0.00" value="${amount}" />
               </div>
             </div>
             <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:0.5rem;margin-bottom:1rem;">

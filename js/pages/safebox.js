@@ -159,7 +159,7 @@ function renderSafeboxDepositPage(container) {
       <div style="padding:1rem;">
         <div style="margin-bottom:1.5rem;">
           <label style="display:block;color:#374151;font-weight:500;margin-bottom:0.5rem;">Amount(₦)</label>
-          <input id="sbd-amount" type="text" readonly class="input" style="font-size:1.125rem;padding:1rem;" placeholder="Input Amount" value="${amount}" />
+          <input id="sbd-amount" type="text" inputmode="numeric" pattern="[0-9]*" readonly class="input" style="font-size:1.125rem;padding:1rem;" placeholder="Input Amount" value="${amount}" />
         </div>
 
         <div style="margin-bottom:1.5rem;">
@@ -282,7 +282,7 @@ function renderSafeboxWithdrawPage(container) {
 
         <div style="margin-bottom:0.375rem;">
           <label style="display:block;color:#111827;font-size:0.9375rem;margin-bottom:0.5rem;">Amount(₦)</label>
-          <input id="sbw-amount" type="text" readonly class="input" style="font-size:1.0625rem;padding:1rem;background:#f5f6f8;border:none;" placeholder="₦" value="${amount}" />
+          <input id="sbw-amount" type="text" inputmode="numeric" pattern="[0-9]*" readonly class="input" style="font-size:1.0625rem;padding:1rem;background:#f5f6f8;border:none;" placeholder="₦" value="${amount}" />
         </div>
         <p style="color:#9ca3af;font-size:0.875rem;margin:0.5rem 0 1.5rem;">Current SafeBox balance ₦${formatMoney(safeboxBalance.toFixed(2))}</p>
 

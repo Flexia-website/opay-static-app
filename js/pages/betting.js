@@ -51,14 +51,14 @@ function renderBettingPage(container) {
 
           <div style="margin-bottom:1rem;">
             <label style="display:block;font-size:0.875rem;font-weight:500;color:#374151;margin-bottom:0.25rem;">Betting Account ID</label>
-            <input id="account-input" class="input" placeholder="Enter your account ID/number" value="${accountId}" />
+            <input id="account-input" type="text" inputmode="numeric" pattern="[0-9]*" class="input" placeholder="Enter your account ID/number" value="${accountId}" />
           </div>
 
           <div style="margin-bottom:1rem;">
             <label style="display:block;font-size:0.875rem;font-weight:500;color:#374151;margin-bottom:0.25rem;">Amount</label>
             <div style="display:flex;align-items:center;border:1px solid hsl(var(--border));border-radius:0.5rem;padding:0.5rem;margin-bottom:0.75rem;">
               <span style="color:#9ca3af;">₦</span>
-              <input id="amount-input" style="flex:1;border:none;outline:none;padding:0 0.5rem;" placeholder="Enter amount" value="${amount}" />
+              <input id="amount-input" type="text" inputmode="numeric" pattern="[0-9]*" style="flex:1;border:none;outline:none;padding:0 0.5rem;" placeholder="Enter amount" value="${amount}" />
             </div>
             <div class="grid" style="grid-template-columns:repeat(5,1fr);gap:0.5rem;">
               ${amounts

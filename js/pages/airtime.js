@@ -49,7 +49,7 @@ function renderAirtimePage(container) {
               <span style="color:#d1d5db;">|</span>
               ${Icon(showNetworkPicker ? "chevron-up" : "chevron-down", { size: 16, class: "" })}
             </button>
-            <input id="phone-input" type="tel" value="${phoneNumber}" placeholder="Phone number"
+            <input id="phone-input" type="tel" inputmode="numeric" pattern="[0-9]*" value="${phoneNumber}" placeholder="Phone number"
               style="flex:1;border:none;outline:none;font-size:1.0625rem;font-weight:700;color:#111827;background:transparent;font-family:inherit;" />
           </div>
           <button id="contacts-btn" style="width:2.25rem;height:2.25rem;border-radius:9999px;background:${primaryColor};display:flex;align-items:center;justify-content:center;border:none;color:white;">
@@ -126,7 +126,7 @@ function renderAirtimePage(container) {
         <label style="display:block;font-size:0.875rem;font-weight:600;color:#374151;margin-bottom:0.5rem;">Or Enter Custom Amount</label>
         <div style="display:flex;align-items:center;background:white;border-radius:0.75rem;padding:0.75rem 1rem;box-shadow:0 1px 2px rgb(0 0 0 / 0.04);">
           <span style="color:#9ca3af;font-weight:600;">₦</span>
-          <input id="custom-amount" style="flex:1;border:none;outline:none;padding:0 0.5rem;font-size:0.9375rem;" placeholder="50 - 500,000" value="${selectedAmount ? "" : amount}" />
+          <input id="custom-amount" type="text" inputmode="numeric" pattern="[0-9]*" style="flex:1;border:none;outline:none;padding:0 0.5rem;font-size:0.9375rem;" placeholder="50 - 500,000" value="${selectedAmount ? "" : amount}" />
         </div>
       </div>
 

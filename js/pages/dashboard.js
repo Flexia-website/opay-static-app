@@ -244,7 +244,7 @@ function showAddMoneyModal() {
 
     <div style="margin-bottom:1.5rem;">
       <label style="font-size:0.8125rem;color:#6b7280;display:block;margin-bottom:0.5rem;">Amount</label>
-      <input id="add-amount" type="text" placeholder="Enter amount" style="width:100%;padding:0.875rem;border:1px solid #e5e7eb;border-radius:0.75rem;font-size:0.9375rem;font-family:inherit;" />
+      <input id="add-amount" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="Enter amount" style="width:100%;padding:0.875rem;border:1px solid #e5e7eb;border-radius:0.75rem;font-size:0.9375rem;font-family:inherit;" />
     </div>
 
     <button id="add-proceed-btn" style="width:100%;background:${primaryColor};color:white;border:none;padding:0.75rem 1.5rem;border-radius:0.75rem;font-weight:600;font-size:0.9375rem;cursor:pointer;">Proceed</button>

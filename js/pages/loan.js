@@ -42,7 +42,7 @@ function renderLoanPage(container) {
           </div>
           <div style="display:flex;align-items:center;border:1px solid hsl(var(--border));border-radius:0.5rem;padding:0.5rem;margin-bottom:1rem;">
             <span style="color:#9ca3af;">₦</span>
-            <input id="loan-amount-input" type="number" value="${loanAmount}" style="flex:1;border:none;outline:none;padding:0 0.5rem;" />
+            <input id="loan-amount-input" type="text" inputmode="numeric" pattern="[0-9]*" value="${loanAmount}" style="flex:1;border:none;outline:none;padding:0 0.5rem;" />
           </div>
 
           <h3 style="font-weight:500;margin:0 0 0.75rem;">Loan Tenure</h3>
@@ -139,7 +139,7 @@ function renderLoanPage(container) {
           <div class="flex justify-between"><span style="font-size:0.875rem;color:#6b7280;">Repayment amount:</span><span style="font-size:0.875rem;font-weight:500;">₦${repayment.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span></div>
         </div>
         <p style="font-size:0.875rem;color:#6b7280;margin:0 0 1rem;">Enter your PIN to confirm this loan application.</p>
-        <input id="loan-pin" type="password" maxlength="4" class="input" placeholder="Enter 4-digit PIN" style="margin-bottom:1rem;" />
+        <input id="loan-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" class="input" placeholder="Enter 4-digit PIN" style="margin-bottom:1rem;" />
         <div class="flex" style="gap:0.5rem;">
           <button id="loan-cancel" style="flex:1;padding:0.5rem;border:1px solid hsl(var(--border));border-radius:0.5rem;background:white;">Cancel</button>
           <button id="loan-confirm" style="flex:1;padding:0.5rem;border-radius:0.5rem;color:white;border:none;background:${primaryColor};">Confirm</button>

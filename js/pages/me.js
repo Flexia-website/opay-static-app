@@ -19,7 +19,7 @@ function renderMePage(container, routeState) {
     <div style="min-height:100vh;background:#f9fafb;display:flex;align-items:center;justify-content:center;">
       <div class="card" style="padding:2rem;width:100%;max-width:24rem;margin:0 1rem;">
         <h2 style="font-size:1.25rem;font-weight:600;text-align:center;margin:0 0 1.5rem;">Enter Passcode</h2>
-        <input id="passcode-input" type="password" placeholder="Enter 4-digit passcode" maxlength="4" class="input" style="margin-bottom:1rem;" />
+        <input id="passcode-input" type="password" inputmode="numeric" pattern="[0-9]*" placeholder="Enter 4-digit passcode" maxlength="4" class="input" style="margin-bottom:1rem;" />
         <button id="unlock-btn" class="btn" style="width:100%;background:#059669;color:white;" disabled>Unlock</button>
       </div>
     </div>`;

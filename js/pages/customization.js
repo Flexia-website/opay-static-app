@@ -171,15 +171,15 @@ function renderCustomizationPage(container) {
               <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;">
                 <div>
                   <label style="display:block;font-size:0.75rem;color:#6b7280;margin-bottom:0.25rem;">Red (0-255)</label>
-                  <input id="rgb-r" type="number" min="0" max="255" value="${hexToRgb(primaryColor)?.r || 0}" style="width:100%;padding:0.5rem;border:1px solid #d1d5db;border-radius:0.5rem;font-size:0.875rem;" />
+                  <input id="rgb-r" type="number" inputmode="numeric" min="0" max="255" value="${hexToRgb(primaryColor)?.r || 0}" style="width:100%;padding:0.5rem;border:1px solid #d1d5db;border-radius:0.5rem;font-size:0.875rem;" />
                 </div>
                 <div>
                   <label style="display:block;font-size:0.75rem;color:#6b7280;margin-bottom:0.25rem;">Green (0-255)</label>
-                  <input id="rgb-g" type="number" min="0" max="255" value="${hexToRgb(primaryColor)?.g || 0}" style="width:100%;padding:0.5rem;border:1px solid #d1d5db;border-radius:0.5rem;font-size:0.875rem;" />
+                  <input id="rgb-g" type="number" inputmode="numeric" min="0" max="255" value="${hexToRgb(primaryColor)?.g || 0}" style="width:100%;padding:0.5rem;border:1px solid #d1d5db;border-radius:0.5rem;font-size:0.875rem;" />
                 </div>
                 <div>
                   <label style="display:block;font-size:0.75rem;color:#6b7280;margin-bottom:0.25rem;">Blue (0-255)</label>
-                  <input id="rgb-b" type="number" min="0" max="255" value="${hexToRgb(primaryColor)?.b || 0}" style="width:100%;padding:0.5rem;border:1px solid #d1d5db;border-radius:0.5rem;font-size:0.875rem;" />
+                  <input id="rgb-b" type="number" inputmode="numeric" min="0" max="255" value="${hexToRgb(primaryColor)?.b || 0}" style="width:100%;padding:0.5rem;border:1px solid #d1d5db;border-radius:0.5rem;font-size:0.875rem;" />
                 </div>
               </div>
               <p id="rgb-error" style="color:#ef4444;font-size:0.75rem;margin:0.25rem 0 0;display:none;">Invalid RGB values (0-255)</p>

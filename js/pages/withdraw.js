@@ -43,7 +43,7 @@ function renderWithdrawPage(container) {
             <label style="display:block;font-size:0.875rem;font-weight:500;color:#374151;margin-bottom:0.25rem;">Amount</label>
             <div style="display:flex;align-items:center;border:1px solid hsl(var(--border));border-radius:0.5rem;padding:0.5rem;">
               <span style="color:#9ca3af;">₦</span>
-              <input id="amount-input" style="flex:1;border:none;outline:none;padding:0 0.5rem;" placeholder="0.00" value="${amount}" />
+              <input id="amount-input" type="text" inputmode="numeric" pattern="[0-9]*" style="flex:1;border:none;outline:none;padding:0 0.5rem;" placeholder="0.00" value="${amount}" />
             </div>
           </div>
 

@@ -158,7 +158,7 @@ function renderDataPage(container) {
               <span style="color:#d1d5db;">|</span>
               ${Icon(showNetworkPicker ? "chevron-up" : "chevron-down", { size: 16, class: "" })}
             </button>
-            <input id="phone-input" type="tel" value="${phoneNumber}" placeholder="Phone number"
+            <input id="phone-input" type="tel" inputmode="numeric" pattern="[0-9]*" value="${phoneNumber}" placeholder="Phone number"
               style="flex:1;border:none;outline:none;font-size:1.0625rem;font-weight:700;color:#111827;background:transparent;font-family:inherit;" />
           </div>
           <button id="contacts-btn" style="width:2.25rem;height:2.25rem;border-radius:9999px;background:${primaryColor};display:flex;align-items:center;justify-content:center;border:none;color:white;">

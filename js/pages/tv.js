@@ -46,7 +46,7 @@ function renderTvPage(container) {
                 <span style="font-size:0.875rem;color:#6b7280;">Beneficiaries</span>
                 <span style="color:#00B876;cursor:pointer;">›</span>
               </div>
-              <input type="text" placeholder="Enter Your Smartcard Number" style="width:100%;padding:0.875rem;border:1px solid #e5e7eb;border-radius:0.75rem;font-size:0.9375rem;margin-bottom:1rem;font-family:inherit;" />
+              <input type="text" inputmode="numeric" pattern="[0-9]*" placeholder="Enter Your Smartcard Number" style="width:100%;padding:0.875rem;border:1px solid #e5e7eb;border-radius:0.75rem;font-size:0.9375rem;margin-bottom:1rem;font-family:inherit;" />
             </div>
 
             <!-- Voucher Section -->
@@ -80,7 +80,7 @@ function renderTvPage(container) {
                       ${plan.oldPrice ? `<p style="font-size:0.75rem;color:#9ca3af;text-decoration:line-through;margin:0.25rem 0 0;">${plan.oldPrice}</p>` : ''}
                     </div>
                   ` : `
-                    <input type="text" placeholder="${plan.placeholder}" style="width:100%;padding:0.75rem;border:1px solid #e5e7eb;border-radius:0.5rem;font-size:0.875rem;font-family:inherit;" />
+                    <input type="text" inputmode="numeric" pattern="[0-9]*" placeholder="${plan.placeholder}" style="width:100%;padding:0.75rem;border:1px solid #e5e7eb;border-radius:0.5rem;font-size:0.875rem;font-family:inherit;" />
                   `}
                 </div>
               `).join('')}

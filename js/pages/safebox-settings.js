@@ -64,7 +64,7 @@ function renderSafeboxAutosavePage(container) {
 
         <div class="card" style="padding:1.125rem;">
           <label style="display:block;font-size:0.9375rem;color:#111827;margin-bottom:0.625rem;">Amount to deposit at a time(₦)</label>
-          <input id="as-amount" class="input" style="background:#f5f6f8;border:none;font-size:1.0625rem;padding:1rem;margin-bottom:0.875rem;" placeholder="₦" value="${amount}" />
+          <input id="as-amount" type="text" inputmode="numeric" pattern="[0-9]*" class="input" style="background:#f5f6f8;border:none;font-size:1.0625rem;padding:1rem;margin-bottom:0.875rem;" placeholder="₦" value="${amount}" />
           <div class="grid" style="grid-template-columns:repeat(4,1fr);gap:0.5rem;margin-bottom:1.25rem;">
             ${[500, 1000, 2000, 5000]
               .map(
