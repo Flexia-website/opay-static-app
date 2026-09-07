@@ -31,12 +31,12 @@ function renderDashboard(container) {
     { icon: "more-horizontal", label: "More", path: "/more", key: "more" },
   ];
 
-  function iconOrImage(iconName, key, size = 22) {
+  function iconOrImage(iconName, key, size = 22, color) {
     const img = buttonImages[key];
     if (img) {
       return `<img src="${img}" alt="${key}" style="width:${size}px;height:${size}px;object-fit:cover;border-radius:9999px;" />`;
     }
-    return `<span style="color:${primaryColor};display:flex;">${Icon(iconName, { size, strokeWidth: 2 })}</span>`;
+    return `<span style="color:${color || primaryColor};display:flex;">${Icon(iconName, { size, strokeWidth: 2 })}</span>`;
   }
 
   function renderBalanceCard() {
@@ -44,7 +44,7 @@ function renderDashboard(container) {
     <div style="background:${primaryColor};margin:0;padding:0.7rem 0.5rem;border-radius:0.875rem;color:white;box-shadow:0 6px 20px -6px ${primaryColor}80;">
       <div class="flex justify-between items-center" style="margin-bottom:0.4rem;">
         <div class="flex items-center" style="gap:4px;">
-          ${iconOrImage("shield-check", "balance-shield", 14)}
+          ${iconOrImage("shield-check", "balance-shield", 14, "white")}
           <span style="font-size:0.75rem;font-weight:700;">Available Balance</span>
           <button id="toggle-balance" style="display:flex;align-items:center;justify-content:center;border:none;background:none;color:rgba(255,255,255,0.85);padding:0;">
             ${Icon(showBalance ? "eye" : "eye-off", { size: 13 })}
@@ -53,9 +53,9 @@ function renderDashboard(container) {
         <span id="tx-history-link" style="font-size:0.7rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:1px;margin-right:0.2rem;">Transaction History ${Icon("chevron-right", { size: 12 })}</span>
       </div>
       <div class="flex justify-between items-center">
-        <h2 id="balance-amount" style="font-size:1.5rem;font-weight:800;margin:0;letter-spacing:0.01em;">${showBalance ? "₦" + formatBalance(balance) : "****"}</h2>
-        <button id="add-money-btn" style="background:white;color:${primaryColor};padding:0.35rem 0.8rem;border-radius:9999px;font-size:0.7rem;font-weight:700;border:none;display:flex;align-items:center;gap:3px;">
-          ${iconOrImage("plus", "add-money", 12)} Add Money
+        <h2 id="balance-amount" style="font-size:1.4rem;font-weight:800;margin:0;letter-spacing:0.01em;display:flex;align-items:center;gap:4px;">${showBalance ? "₦" + formatBalance(balance) : "****"} ${Icon("chevron-right", { size: 16 })}</h2>
+        <button id="add-money-btn" style="background:white;color:${primaryColor};padding:0.4rem 0.9rem;border-radius:9999px;font-size:0.75rem;font-weight:700;border:none;display:flex;align-items:center;gap:3px;">
+          ${iconOrImage("plus", "add-money", 13)} Add Money
         </button>
       </div>
     </div>`;
@@ -227,6 +227,7 @@ function renderDashboard(container) {
 }
 
 function showAddMoneyModal() {
+  const { primaryColor } = Stores.customization.get();
   const modal = document.createElement('div');
   modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;align-items:flex-end;z-index:1000;';
   
@@ -246,7 +247,7 @@ function showAddMoneyModal() {
       <input id="add-amount" type="text" placeholder="Enter amount" style="width:100%;padding:0.875rem;border:1px solid #e5e7eb;border-radius:0.75rem;font-size:0.9375rem;font-family:inherit;" />
     </div>
 
-    <button id="add-proceed-btn" style="width:100%;background:#00B876;color:white;border:none;padding:0.75rem 1.5rem;border-radius:0.75rem;font-weight:600;font-size:0.9375rem;cursor:pointer;">Proceed</button>
+    <button id="add-proceed-btn" style="width:100%;background:${primaryColor};color:white;border:none;padding:0.75rem 1.5rem;border-radius:0.75rem;font-weight:600;font-size:0.9375rem;cursor:pointer;">Proceed</button>
     <button id="add-cancel-btn" style="width:100%;background:none;color:#6b7280;border:1px solid #e5e7eb;border-radius:0.75rem;font-weight:600;padding:0.75rem;margin-top:0.75rem;cursor:pointer;">Cancel</button>
   `;
   
@@ -285,8 +286,8 @@ function showAddMoneyModal() {
         b.style.borderColor = '#e5e7eb';
         b.style.color = '#111827';
       });
-      btn.style.borderColor = '#00B876';
-      btn.style.color = '#00B876';
+      btn.style.borderColor = primaryColor;
+      btn.style.color = primaryColor;
     });
     bankSelector.appendChild(btn);
   });
@@ -313,6 +314,7 @@ function showAddMoneyModal() {
 }
 
 function showBankReceiptModal(bank, amount) {
+  const { primaryColor } = Stores.customization.get();
   const modal = document.createElement('div');
   modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;align-items:flex-end;z-index:1000;';
   
@@ -351,7 +353,7 @@ function showBankReceiptModal(bank, amount) {
       </div>
       <div style="display:flex;justify-content:space-between;padding:0.75rem 0;">
         <span style="color:#6b7280;font-size:0.875rem;">Amount</span>
-        <span style="font-weight:700;color:#00B876;font-size:1rem;">₦${formatMoney(amount)}</span>
+        <span style="font-weight:700;color:${primaryColor};font-size:1rem;">₦${formatMoney(amount)}</span>
       </div>
     </div>
 
@@ -359,7 +361,7 @@ function showBankReceiptModal(bank, amount) {
       <strong>Note:</strong> Your account will be credited automatically after we confirm the bank transfer. This usually takes 5-10 minutes.
     </div>
 
-    <button id="confirm-deposit-btn" style="width:100%;background:#00B876;color:white;border:none;padding:0.75rem 1.5rem;border-radius:0.75rem;font-weight:600;font-size:0.9375rem;cursor:pointer;">I Have Sent The Money</button>
+    <button id="confirm-deposit-btn" style="width:100%;background:${primaryColor};color:white;border:none;padding:0.75rem 1.5rem;border-radius:0.75rem;font-weight:600;font-size:0.9375rem;cursor:pointer;">I Have Sent The Money</button>
     <button id="cancel-deposit-btn" style="width:100%;background:none;color:#6b7280;border:1px solid #e5e7eb;border-radius:0.75rem;font-weight:600;padding:0.75rem;margin-top:0.75rem;cursor:pointer;">Cancel</button>
   `;
   
