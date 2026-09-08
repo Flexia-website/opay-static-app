@@ -199,7 +199,7 @@ function renderDashboard(container) {
       rebindDynamic();
     });
     const addMoneyBtn = container.querySelector("#add-money-btn");
-    if (addMoneyBtn) addMoneyBtn.addEventListener("click", () => showAddMoneyModal());
+    if (addMoneyBtn) addMoneyBtn.addEventListener("click", () => navigate("/me", { openAddMoney: true }));
     container.querySelectorAll("[data-nav]").forEach((btn) => {
       btn.addEventListener("click", () => navigate(btn.dataset.nav));
     });
@@ -216,7 +216,7 @@ function renderDashboard(container) {
       });
     }
     const addMoneyBtn = container.querySelector("#add-money-btn");
-    if (addMoneyBtn) addMoneyBtn.addEventListener("click", () => showAddMoneyModal());
+    if (addMoneyBtn) addMoneyBtn.addEventListener("click", () => navigate("/me", { openAddMoney: true }));
     const link = container.querySelector("#tx-history-link");
     if (link) link.addEventListener("click", () => navigate("/transaction-history"));
 

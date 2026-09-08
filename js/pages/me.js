@@ -12,7 +12,9 @@ function renderMePage(container, routeState) {
   let isLocked = true;
   let passcode = "";
   let showBalanceAdjuster = (routeState && routeState.openBalanceAdjuster) || false;
+  let openAddMoneyAfterUnlock = (routeState && routeState.openAddMoney) || false;
   let showBalance = false;
+  let securityEnabled = localStorage.getItem("opay_security_enabled") === "true";
 
   function lockedHtml() {
     return `
@@ -36,6 +38,10 @@ function renderMePage(container, routeState) {
         isLocked = false;
         toast.success("Access granted");
         renderUnlocked();
+        if (openAddMoneyAfterUnlock) {
+          openAddMoneyAfterUnlock = false;
+          setTimeout(() => showAddMoneyModal(), 150);
+        }
       } else {
         toast.error("Invalid passcode");
         input.value = "";
@@ -63,26 +69,25 @@ function renderMePage(container, routeState) {
     </button>`;
   }
 
-  const primaryItems = [
-    { id: "txhistory", icon: "file-text", label: "Transaction History", desc: "" },
-    { id: "limits", icon: "gauge", label: "Account Limits", desc: "View your transaction limits" },
-    { id: "cards", icon: "credit-card", label: "Bank Card/Account", desc: "Add payment option" },
-    { id: "bizpayment", icon: "store", label: "My BizPayment", desc: "Receive payment for business" },
-    { id: "ojunior", icon: "users", label: "OJunior", desc: "Create an account for your child/ward", badge: "New" },
-  ];
-  const secondaryItems = [
-    { id: "security", icon: "shield-check", label: "Security Center", desc: "Protect your funds" },
-    { id: "support", icon: "headphones", label: "Customer Service Center", desc: "" },
-    { id: "invitation", icon: "party-popper", label: "Invitation", desc: "" },
-    { id: "adjustbalance", icon: "wallet", label: "Adjust Balance", desc: "Add or remove funds" },
-    { id: "addmoney", icon: "plus-circle", label: "Add Money", desc: "Fund your account" },
-    { id: "appearance", icon: "palette", label: "Appearance", desc: "Customize the app" },
-    { id: "signout", icon: "log-out", label: "Sign Out", desc: "", danger: true },
-  ];
-
   function unlockedHtml() {
     const { profilePhoto } = Stores.customization.get();
     const { balance } = Stores.balance.get();
+    const primaryItems = [
+      { id: "txhistory", icon: "file-text", label: "Transaction History", desc: "" },
+      { id: "limits", icon: "gauge", label: "Account Limits", desc: "View your transaction limits" },
+      { id: "cards", icon: "credit-card", label: "Bank Card/Account", desc: "Add payment option" },
+      { id: "bizpayment", icon: "store", label: "My BizPayment", desc: "Receive payment for business" },
+      { id: "ojunior", icon: "users", label: "OJunior", desc: "Create an account for your child/ward", badge: "New" },
+    ];
+    const secondaryItems = [
+      { id: "security", icon: "shield-check", label: "Security Center", desc: securityEnabled ? "Protected \u2713" : "Protect your funds" },
+      { id: "support", icon: "headphones", label: "Customer Service Center", desc: "" },
+      { id: "invitation", icon: "party-popper", label: "Invitation", desc: "" },
+      { id: "adjustbalance", icon: "wallet", label: "Adjust Balance", desc: "Add or remove funds" },
+      { id: "addmoney", icon: "plus-circle", label: "Add Money", desc: "Fund your account" },
+      { id: "appearance", icon: "palette", label: "Appearance", desc: "Customize the app" },
+      { id: "signout", icon: "log-out", label: "Sign Out", desc: "", danger: true },
+    ];
     return `
     <div class="pb-nav-safe" style="min-height:100vh;background:#f9fafb;">
       <div style="background:#e8f5ec;padding:1.5rem 1.25rem;position:relative;overflow:hidden;">
@@ -111,14 +116,24 @@ function renderMePage(container, routeState) {
         </div>
       </div>
 
-      <div style="margin:-0.75rem 1rem 0;background:#10b981;border-radius:1rem;padding:1rem;display:flex;align-items:center;gap:0.75rem;color:white;position:relative;z-index:1;">
+      ${
+        securityEnabled
+          ? `<div style="margin:-0.75rem 1rem 0;background:#dcf3e3;border-radius:1rem;padding:1rem;display:flex;align-items:center;gap:0.75rem;color:#047857;position:relative;z-index:1;">
+        ${Icon("shield-check", { size: 24 })}
+        <div style="flex:1;">
+          <div style="font-weight:600;">Security Check is turned on</div>
+          <div style="font-size:0.75rem;opacity:0.85;margin-top:2px;">Your account has extra safety checks enabled.</div>
+        </div>
+      </div>`
+          : `<div style="margin:-0.75rem 1rem 0;background:#10b981;border-radius:1rem;padding:1rem;display:flex;align-items:center;gap:0.75rem;color:white;position:relative;z-index:1;">
         ${Icon("shield-check", { size: 24 })}
         <div style="flex:1;">
           <div style="font-weight:600;">Security Check is not turned on</div>
           <div style="font-size:0.75rem;opacity:0.9;margin-top:2px;">Make your account more secure with extra safety checks.</div>
         </div>
-        <button style="background:white;color:#059669;font-weight:600;padding:0.5rem 1rem;border-radius:9999px;font-size:0.875rem;border:none;">Turn On</button>
-      </div>
+        <button id="turn-on-security-btn" style="background:white;color:#059669;font-weight:600;padding:0.5rem 1rem;border-radius:9999px;font-size:0.875rem;border:none;">Turn On</button>
+      </div>`
+      }
 
       <div id="ba-wrap" style="margin:1rem 1rem 0;">${showBalanceAdjuster ? BalanceAdjusterHtml() : ""}</div>
 
@@ -164,6 +179,9 @@ function renderMePage(container, routeState) {
           case "appearance":
             navigate("/customization");
             break;
+          case "security":
+            enableSecurity();
+            break;
           case "signout":
             navigate("/");
             break;
@@ -172,6 +190,11 @@ function renderMePage(container, routeState) {
         }
       });
     });
+    const turnOnBtn = container.querySelector("#turn-on-security-btn");
+    if (turnOnBtn) turnOnBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      enableSecurity();
+    });
     if (showBalanceAdjuster) {
       const baWrap = container.querySelector("#ba-wrap");
       bindBalanceAdjuster(baWrap, () => {
@@ -179,6 +202,17 @@ function renderMePage(container, routeState) {
         renderUnlocked();
       });
     }
+  }
+
+  function enableSecurity() {
+    if (securityEnabled) {
+      toast.success("Security Check is already active on your account");
+      return;
+    }
+    securityEnabled = true;
+    localStorage.setItem("opay_security_enabled", "true");
+    toast.success("Security Check enabled — your account is now more secure");
+    renderUnlocked();
   }
 
   function renderUnlocked() {
