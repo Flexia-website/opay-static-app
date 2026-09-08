@@ -3,6 +3,7 @@
 const Router = (() => {
   const routes = [];
   let notFoundHandler = null;
+  let pendingState = null;
   const root = () => document.getElementById("root");
 
   function register(path, handler) {
@@ -14,7 +15,8 @@ const Router = (() => {
     notFoundHandler = handler;
   }
 
-  function navigate(path) {
+  function navigate(path, state) {
+    pendingState = state || null;
     if (location.hash.slice(1) === path) {
       render(); // force re-render even if same path
     } else {
@@ -33,9 +35,12 @@ const Router = (() => {
     container.innerHTML = "";
     window.scrollTo(0, 0);
 
+    const state = pendingState;
+    pendingState = null;
+
     const match = routes.find((r) => r.path === path);
     if (match) {
-      match.handler(container);
+      match.handler(container, state);
     } else if (notFoundHandler) {
       notFoundHandler(container);
     } else {
